@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Monitoramento Portais</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background: #0f1c2e;
+    color:white;
+}
+
+header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:#12263f;
+}
+
+.logo {
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logo img {
+    height:60px;
+}
+
+.percentual {
+    font-size:28px;
+    font-weight:bold;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap:20px;
+    padding:40px;
+}
+
+.card {
+    padding:25px;
+    border-radius:10px;
+    text-align:center;
+    font-size:22px;
+    transition:0.3s;
+}
+
+.disponivel {
+    background:#0f5132;
+    box-shadow:0 0 15px #00ff88;
+}
+
+.instavel {
+    background:#664d03;
+    box-shadow:0 0 15px #ffc107;
+}
+
+.indisponivel {
+    background:#842029;
+    box-shadow:0 0 15px #ff0000;
+}
+
+footer {
+    text-align:center;
+    padding:20px;
+    background:#12263f;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">
+<img src="/static/logo.png">
+<h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
+</div>
+
+<div class="percentual">
+Disponibilidade Geral: <span id="percentual">0%</span>
+</div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+Última atualização: <span id="atualizado"></span>
+</footer>
+
+<script>
+async function atualizar() {
+    const resposta = await fetch("/dados");
+    const dados = await resposta.json();
+
+    document.getElementById("percentual").innerText = dados.percentual + "%";
+    document.getElementById("atualizado").innerText = dados.atualizado;
+
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    dados.portais.forEach(p => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+
+        if(p.status === "DISPONÍVEL") card.classList.add("disponivel");
+        else if(p.status === "INSTÁVEL") card.classList.add("instavel");
+        else card.classList.add("indisponivel");
+
+        card.innerHTML = `
+            <h2>${p.nome}</h2>
+            <p>${p.status}</p>
+            <p>Tempo: ${p.tempo} ms</p>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+setInterval(atualizar, 30000);
+atualizar();
+</script>
+
+</body>
+</html>
