@@ -1,51 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Teste</title>
+</head>
+
+<body style="background:black;color:white;font-family:Arial">
+
+<h1>Painel funcionando</h1>
+
+<div id="dados"></div>
+
 <script>
 
-let telaAtual = 0
+fetch("/dados")
+.then(res => res.json())
+.then(data => {
 
-const telas = [
-document.getElementById("tela1"),
-document.getElementById("tela2"),
-document.getElementById("tela3"),
-document.getElementById("tela4")
-]
+document.getElementById("dados").innerHTML =
+"Portais monitorados: " + data.total
 
-function mostrarTela(index){
-
-telas.forEach(t => t.style.display="none")
-
-telas[index].style.display="block"
-
-if(index === 3){
-
-setTimeout(()=>{
-if(typeof mapa !== "undefined"){
-mapa.invalidateSize()
-}
-},500)
-
-}
-
-}
-
-function iniciarRotacao(){
-
-mostrarTela(0)
-
-setInterval(()=>{
-
-telaAtual++
-
-if(telaAtual >= telas.length){
-telaAtual = 0
-}
-
-mostrarTela(telaAtual)
-
-},20000)
-
-}
-
-window.onload = iniciarRotacao
+})
 
 </script>
 
+</body>
+</html>
