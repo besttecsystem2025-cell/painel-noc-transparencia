@@ -1,360 +1,51 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Centro de Monitoramento - Governo Digital</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
-
-<style>
-
-body{
-margin:0;
-font-family:Segoe UI,Arial,sans-serif;
-background:#020617;
-color:white;
-}
-
-/* HEADER */
-
-header{
-background:#050d1a;
-padding:30px;
-display:flex;
-flex-direction:column;
-align-items:center;
-border-bottom:1px solid rgba(0,180,255,.3);
-box-shadow:0 0 40px rgba(0,180,255,.2);
-text-align:center;
-}
-
-.logo-area img{
-height:120px;
-filter: drop-shadow(0 0 15px #00b4ff);
-}
-
-h1{
-font-size:32px;
-color:#7dd3fc;
-margin:10px 0;
-}
-
-.status-geral{
-font-size:22px;
-color:#38bdf8;
-}
-
-/* TELAS */
-
-.tela{
-display:none;
-min-height:70vh;
-}
-
-.tela.ativa{
-display:block;
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:30px;
-padding:40px;
-}
-
-/* CARDS */
-
-.card{
-background:#0b1220;
-border-radius:16px;
-padding:30px;
-text-align:center;
-border:1px solid rgba(0,180,255,.25);
-box-shadow:0 0 25px rgba(0,180,255,.2);
-}
-
-.disponivel{
-border-color:#22c55e;
-}
-
-.instavel{
-border-color:#facc15;
-}
-
-.indisponivel{
-border-color:#ef4444;
-}
-
-/* RANKING */
-
-.ranking{
-padding:40px;
-}
-
-.ranking-item{
-padding:15px;
-border-bottom:1px solid rgba(255,255,255,.1);
-font-size:20px;
-}
-
-/* MAPA */
-
-#mapa{
-height:70vh;
-margin:30px;
-border-radius:16px;
-}
-
-/* GRAFICO */
-
-.grafico-area{
-padding:40px;
-}
-
-footer{
-text-align:center;
-padding:10px;
-background:#050d1a;
-color:#94a3b8;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<img src="{{ url_for('static', filename='Governo Digital.png') }}">
-
-<h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
-
-<div class="status-geral">
-Disponibilidade Geral: <span id="percentual">0%</span>
-</div>
-
-</header>
-
-<!-- STATUS -->
-
-<div class="tela ativa" id="tela1">
-
-<div class="grid" id="grid"></div>
-
-</div>
-
-<!-- RANKING -->
-
-<div class="tela" id="tela2">
-
-<div class="ranking">
-
-<h2>Ranking de desempenho</h2>
-
-<div id="rankingLista"></div>
-
-</div>
-
-</div>
-
-<!-- GRAFICO -->
-
-<div class="tela" id="tela3">
-
-<div class="grafico-area">
-
-<h2>Tempo médio de resposta</h2>
-
-<canvas id="graficoTempo"></canvas>
-
-</div>
-
-</div>
-
-<!-- MAPA -->
-
-<div class="tela" id="tela4">
-
-<div id="mapa"></div>
-
-</div>
-
-<footer>
-Centro de Monitoramento Digital • Governo Digital
-</footer>
-
 <script>
 
-/* MAPA */
+let telaAtual = 0
 
-const mapa=L.map('mapa').setView([-15.5,-49.5],7)
+const telas = [
+document.getElementById("tela1"),
+document.getElementById("tela2"),
+document.getElementById("tela3"),
+document.getElementById("tela4")
+]
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
+function mostrarTela(index){
 
-const cidades={
-"Valparaíso":[-16.065,-47.975],
-"Cidade Ocidental":[-16.076,-47.925],
-"Luziânia":[-16.252,-47.950],
-"São João d'Aliança":[-14.705,-47.522],
-"Alto Paraíso":[-14.130,-47.510],
-"Simolândia":[-14.464,-46.484],
-"Terezópolis":[-16.394,-48.948]
-}
+telas.forEach(t => t.style.display="none")
 
-let marcadores={}
+telas[index].style.display="block"
 
-/* GRAFICO */
-
-let historicoTempo=[]
-let historicoHora=[]
-
-const ctx=document.getElementById('graficoTempo')
-
-const grafico=new Chart(ctx,{
-type:'line',
-data:{
-labels:historicoHora,
-datasets:[{
-label:'Tempo médio (ms)',
-data:historicoTempo,
-borderColor:'#00b4ff',
-backgroundColor:'rgba(0,180,255,.2)',
-tension:0.4
-}]
-}
-})
-
-async function carregar(){
-
-const resposta=await fetch("/dados")
-const dados=await resposta.json()
-
-document.getElementById("percentual").innerText=dados.percentual+"%"
-
-const grid=document.getElementById("grid")
-grid.innerHTML=""
-
-let soma=0
-
-dados.portais.forEach(p=>{
-
-let classe="disponivel"
-
-if(p.status=="INSTÁVEL")classe="instavel"
-if(p.status=="INDISPONÍVEL")classe="indisponivel"
-
-soma+=p.tempo
-
-grid.innerHTML+=`
-
-<div class="card ${classe}">
-<h2>${p.nome}</h2>
-<div>${p.status}</div>
-<div>Tempo: ${p.tempo} ms</div>
-</div>
-
-`
-
-if(cidades[p.nome]){
-
-if(!marcadores[p.nome]){
-
-marcadores[p.nome]=L.circleMarker(cidades[p.nome],{
-radius:8,
-color:"green"
-}).addTo(mapa)
-
-}
-
-}
-
-})
-
-/* RANKING */
-
-const ranking=document.getElementById("rankingLista")
-
-const ordenado=[...dados.portais].sort((a,b)=>a.tempo-b.tempo)
-
-ranking.innerHTML=""
-
-ordenado.forEach((p,i)=>{
-
-ranking.innerHTML+=`
-
-<div class="ranking-item">
-
-${i+1}º — ${p.nome} : ${p.tempo} ms
-
-</div>
-
-`
-
-})
-
-let media=Math.round(soma/dados.portais.length)
-
-historicoTempo.push(media)
-historicoHora.push(new Date().toLocaleTimeString())
-
-if(historicoTempo.length>20){
-
-historicoTempo.shift()
-historicoHora.shift()
-
-}
-
-grafico.update()
-
-}
-
-carregar()
-
-setInterval(carregar,30000)
-
-/* ROTACAO */
-
-let telaAtual=0
-const telas=document.querySelectorAll(".tela")
-
-function trocarTela(){
-
-telas.forEach(t=>t.classList.remove("ativa"))
-
-telaAtual++
-
-if(telaAtual>=telas.length)telaAtual=0
-
-telas[telaAtual].classList.add("ativa")
-
-/* Corrige mapa */
+if(index === 3){
 
 setTimeout(()=>{
-
+if(typeof mapa !== "undefined"){
 mapa.invalidateSize()
-
+}
 },500)
 
 }
 
-/* espera carregar dados primeiro */
+}
 
-setTimeout(()=>{
+function iniciarRotacao(){
 
-setInterval(trocarTela,20000)
+mostrarTela(0)
 
-},5000)
+setInterval(()=>{
+
+telaAtual++
+
+if(telaAtual >= telas.length){
+telaAtual = 0
+}
+
+mostrarTela(telaAtual)
+
+},20000)
+
+}
+
+window.onload = iniciarRotacao
 
 </script>
 
-</body>
-</html>
