@@ -26,9 +26,7 @@ def verificar_portal(nome, url):
         resposta = requests.get(
             url,
             timeout=10,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
+            headers={"User-Agent": "Mozilla/5.0"},
             verify=True
         )
 
@@ -45,15 +43,15 @@ def verificar_portal(nome, url):
         elif resposta.status_code >= 400:
             status = "ERRO PÁGINA"
 
-        # PORTAL QUEBRADO
+        # DETECTAR ERROS NO HTML
         palavras_erro = [
             "erro",
             "error",
             "exception",
             "sql",
-            "não encontrado",
+            "internal server error",
             "pagina nao encontrada",
-            "internal server error"
+            "não encontrado"
         ]
 
         for palavra in palavras_erro:
@@ -97,7 +95,6 @@ def index():
 def dados():
 
     resultados = []
-
     disponiveis = 0
 
     for nome, url in PORTAIS.items():
