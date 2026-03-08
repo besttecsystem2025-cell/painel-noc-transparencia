@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -28,7 +29,7 @@ border-bottom:1px solid #00b4ff;
 box-shadow:0 0 30px rgba(0,180,255,.25);
 }
 
-/* LOGO AREA */
+/* LOGO */
 
 .logo-area{
 display:flex;
@@ -37,8 +38,9 @@ gap:20px;
 }
 
 .logo-area img{
-height:90px;
-filter: drop-shadow(0 0 18px #00b4ff);
+height:130px;
+margin-right:10px;
+filter: drop-shadow(0 0 22px #00b4ff);
 }
 
 h1{
@@ -137,7 +139,7 @@ color:#94a3b8;
 
 /* RESPONSIVO */
 
-@media (max-width:700px){
+@media (max-width:900px){
 
 header{
 flex-direction:column;
@@ -150,7 +152,15 @@ flex-direction:column;
 }
 
 .logo-area img{
-height:70px;
+height:95px;
+}
+
+h1{
+font-size:24px;
+}
+
+.status-geral{
+font-size:20px;
 }
 
 }
