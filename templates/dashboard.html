@@ -19,26 +19,19 @@ margin:0;
 font-family:Segoe UI,Arial,sans-serif;
 background:#020617;
 color:white;
-overflow:hidden;
 }
 
 /* HEADER */
 
 header{
 background:#050d1a;
-padding:25px;
+padding:30px;
 display:flex;
 flex-direction:column;
 align-items:center;
 border-bottom:1px solid rgba(0,180,255,.3);
 box-shadow:0 0 40px rgba(0,180,255,.2);
-}
-
-.logo-area{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:10px;
+text-align:center;
 }
 
 .logo-area img{
@@ -49,21 +42,19 @@ filter: drop-shadow(0 0 15px #00b4ff);
 h1{
 font-size:32px;
 color:#7dd3fc;
-margin:0;
+margin:10px 0;
 }
 
 .status-geral{
 font-size:22px;
 color:#38bdf8;
-margin-top:5px;
 }
 
 /* TELAS */
 
 .tela{
 display:none;
-height:calc(100vh - 140px);
-overflow:auto;
+min-height:70vh;
 }
 
 .tela.ativa{
@@ -117,7 +108,7 @@ font-size:20px;
 /* MAPA */
 
 #mapa{
-height:80vh;
+height:70vh;
 margin:30px;
 border-radius:16px;
 }
@@ -133,9 +124,6 @@ text-align:center;
 padding:10px;
 background:#050d1a;
 color:#94a3b8;
-position:fixed;
-bottom:0;
-width:100%;
 }
 
 </style>
@@ -146,8 +134,6 @@ width:100%;
 
 <header>
 
-<div class="logo-area">
-
 <img src="{{ url_for('static', filename='Governo Digital.png') }}">
 
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
@@ -156,11 +142,9 @@ width:100%;
 Disponibilidade Geral: <span id="percentual">0%</span>
 </div>
 
-</div>
-
 </header>
 
-<!-- TELA 1 -->
+<!-- STATUS -->
 
 <div class="tela ativa" id="tela1">
 
@@ -168,13 +152,13 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 </div>
 
-<!-- TELA 2 -->
+<!-- RANKING -->
 
 <div class="tela" id="tela2">
 
 <div class="ranking">
 
-<h2>Ranking de desempenho dos portais</h2>
+<h2>Ranking de desempenho</h2>
 
 <div id="rankingLista"></div>
 
@@ -182,7 +166,7 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 </div>
 
-<!-- TELA 3 -->
+<!-- GRAFICO -->
 
 <div class="tela" id="tela3">
 
@@ -196,7 +180,7 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 </div>
 
-<!-- TELA 4 -->
+<!-- MAPA -->
 
 <div class="tela" id="tela4">
 
@@ -337,10 +321,9 @@ carregar()
 
 setInterval(carregar,30000)
 
-/* ROTACAO DE TELAS */
+/* ROTACAO */
 
 let telaAtual=0
-
 const telas=document.querySelectorAll(".tela")
 
 function trocarTela(){
@@ -353,9 +336,23 @@ if(telaAtual>=telas.length)telaAtual=0
 
 telas[telaAtual].classList.add("ativa")
 
+/* Corrige mapa */
+
+setTimeout(()=>{
+
+mapa.invalidateSize()
+
+},500)
+
 }
 
-setInterval(trocarTela,15000)
+/* espera carregar dados primeiro */
+
+setTimeout(()=>{
+
+setInterval(trocarTela,20000)
+
+},5000)
 
 </script>
 
