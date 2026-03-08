@@ -94,15 +94,24 @@ border-color:#facc15;
 
 .indisponivel{
 border-color:#ef4444;
+box-shadow:0 0 20px rgba(239,68,68,.7);
+animation:piscando 1s infinite;
+}
+
+@keyframes piscando{
+0%{opacity:1}
+50%{opacity:0.4}
+100%{opacity:1}
 }
 
 /* MAPA */
 
 #mapa{
-height:400px;
+height:420px;
 margin:40px;
 border-radius:16px;
 overflow:hidden;
+border:1px solid rgba(0,180,255,.25);
 }
 
 /* GRÁFICO */
@@ -158,34 +167,55 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 Centro de Monitoramento Digital • Governo Digital
 </footer>
 
+<audio id="alertaSom">
+<source src="https://assets.mixkit.co/sfx/preview/mixkit-alert-alarm-1005.mp3">
+</audio>
+
 <script>
 
-/* MAPA */
+/* MAPA GOIÁS */
 
-const mapa = L.map('mapa').setView([-14.5, -49.5], 7)
+const mapa = L.map('mapa', {
+zoomControl:false,
+minZoom:7,
+maxZoom:10
+}).setView([-15.5,-49.5],7)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
 
+/* LIMITAR VISUALIZAÇÃO EM GOIÁS */
+
+const bounds = [
+[-18.5,-53],
+[-12.5,-45]
+]
+
+mapa.setMaxBounds(bounds)
+
+/* CIDADES MONITORADAS */
+
 const cidades = {
-"Valparaíso": [-16.065, -47.975],
-"Cidade Ocidental": [-16.076, -47.925],
-"Luziânia": [-16.252, -47.950],
-"São João d'Aliança": [-14.705, -47.522],
-"Alto Paraíso": [-14.130, -47.510],
-"Simolândia": [-14.464, -46.484],
-"Terezópolis": [-16.394, -48.948]
+
+"Valparaíso": [-16.065,-47.975],
+"Cidade Ocidental": [-16.076,-47.925],
+"Luziânia": [-16.252,-47.950],
+"São João d'Aliança": [-14.705,-47.522],
+"Alto Paraíso": [-14.130,-47.510],
+"Simolândia": [-14.464,-46.484],
+"Terezópolis": [-16.394,-48.948]
+
 }
 
-let marcadores = {}
+let marcadores={}
 
 /* GRÁFICO */
 
 let historicoTempo=[]
 let historicoHora=[]
 
-const ctx = document.getElementById('graficoTempo')
+const ctx=document.getElementById('graficoTempo')
 
-const grafico = new Chart(ctx,{
+const grafico=new Chart(ctx,{
 type:'line',
 data:{
 labels:historicoHora,
@@ -193,29 +223,42 @@ datasets:[{
 label:'Tempo médio (ms)',
 data:historicoTempo,
 borderColor:'#00b4ff',
-backgroundColor:'rgba(0,180,255,.2)'
+backgroundColor:'rgba(0,180,255,.2)',
+tension:0.4
 }]
+},
+options:{
+plugins:{legend:{labels:{color:'white'}}},
+scales:{
+x:{ticks:{color:'white'}},
+y:{ticks:{color:'white'}}
+}
 }
 })
 
 async function carregar(){
 
-const resposta = await fetch("/dados")
-const dados = await resposta.json()
+const resposta=await fetch("/dados")
+const dados=await resposta.json()
 
-document.getElementById("percentual").innerText = dados.percentual + "%"
+document.getElementById("percentual").innerText=dados.percentual+"%"
 
-const grid = document.getElementById("grid")
+const grid=document.getElementById("grid")
 grid.innerHTML=""
 
 let soma=0
+let alerta=false
 
 dados.portais.forEach(p=>{
 
 let classe="disponivel"
 
 if(p.status=="INSTÁVEL") classe="instavel"
-if(p.status=="INDISPONÍVEL") classe="indisponivel"
+
+if(p.status=="INDISPONÍVEL" || p.status=="FORA DO AR"){
+classe="indisponivel"
+alerta=true
+}
 
 soma+=p.tempo
 
@@ -229,17 +272,19 @@ grid.innerHTML+=`
 
 `
 
-/* MAPA */
+/* MARCADORES NO MAPA */
 
 if(cidades[p.nome]){
 
 let cor="green"
 
 if(p.status=="INSTÁVEL") cor="yellow"
-if(p.status=="INDISPONÍVEL") cor="red"
+if(p.status=="INDISPONÍVEL" || p.status=="FORA DO AR") cor="red"
 
 if(marcadores[p.nome]){
+
 marcadores[p.nome].setStyle({color:cor})
+
 }else{
 
 marcadores[p.nome]=L.circleMarker(cidades[p.nome],{
@@ -252,6 +297,10 @@ color:cor
 }
 
 })
+
+if(alerta){
+document.getElementById("alertaSom").play()
+}
 
 let media=Math.round(soma/dados.portais.length)
 
