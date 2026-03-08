@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NOC Governo Digital</title>
+<title>Centro de Monitoramento - Governo Digital</title>
 
 <style>
 
@@ -19,13 +19,13 @@ color:white;
 /* HEADER */
 
 header{
-background:#060f1f;
-padding:20px 40px;
+background:#050d1a;
+padding:25px 40px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-border-bottom:1px solid rgba(0,180,255,.2);
-box-shadow:0 0 25px rgba(0,180,255,.15);
+border-bottom:1px solid rgba(0,180,255,.3);
+box-shadow:0 0 40px rgba(0,180,255,.2);
 }
 
 .logo-area{
@@ -35,11 +35,12 @@ gap:25px;
 }
 
 .logo-area img{
-height:110px;
+height:140px;
+filter: drop-shadow(0 0 15px #00b4ff);
 }
 
 h1{
-font-size:28px;
+font-size:30px;
 margin:0;
 color:#7dd3fc;
 letter-spacing:1px;
@@ -58,7 +59,7 @@ font-weight:bold;
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:25px;
+gap:30px;
 padding:40px;
 }
 
@@ -66,17 +67,17 @@ padding:40px;
 
 .card{
 background:#0b1220;
-border-radius:14px;
+border-radius:16px;
 padding:30px;
 text-align:center;
 border:1px solid rgba(0,180,255,.25);
-box-shadow:0 0 25px rgba(0,180,255,.15);
+box-shadow:0 0 25px rgba(0,180,255,.2);
 transition:.3s;
 }
 
 .card:hover{
-transform:translateY(-4px);
-box-shadow:0 0 30px rgba(0,180,255,.4);
+transform:translateY(-5px);
+box-shadow:0 0 35px rgba(0,180,255,.5);
 }
 
 .card h2{
@@ -84,7 +85,7 @@ font-size:28px;
 margin-bottom:10px;
 }
 
-/* STATUS COLORS */
+/* STATUS */
 
 .disponivel{
 border-color:#22c55e;
@@ -117,8 +118,8 @@ opacity:.8;
 
 footer{
 text-align:center;
-padding:14px;
-background:#060f1f;
+padding:15px;
+background:#050d1a;
 font-size:14px;
 color:#94a3b8;
 }
@@ -127,7 +128,7 @@ color:#94a3b8;
 
 @keyframes pulse{
 0%{transform:scale(1)}
-50%{transform:scale(1.02)}
+50%{transform:scale(1.03)}
 100%{transform:scale(1)}
 }
 
@@ -182,13 +183,9 @@ if(p.status=="INDISPONÍVEL") classe="indisponivel"
 grid.innerHTML+=`
 
 <div class="card ${classe}">
-
 <h2>${p.nome}</h2>
-
 <div class="status">${p.status}</div>
-
 <div class="tempo">Tempo: ${p.tempo} ms</div>
-
 </div>
 
 `
