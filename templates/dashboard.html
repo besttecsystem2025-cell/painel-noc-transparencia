@@ -7,6 +7,8 @@
 
 <title>Centro de Monitoramento - Governo Digital</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 
 body{
@@ -16,9 +18,11 @@ background:#020617;
 color:white;
 }
 
+/* HEADER */
+
 header{
 background:#050d1a;
-padding:30px;
+padding:25px;
 text-align:center;
 border-bottom:1px solid rgba(0,180,255,.3);
 box-shadow:0 0 40px rgba(0,180,255,.2);
@@ -39,20 +43,22 @@ font-size:20px;
 color:#38bdf8;
 }
 
+/* CARDS DOS PORTAIS */
+
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:30px;
-padding:40px;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:25px;
+padding:35px;
 }
 
 .card{
 background:#0b1220;
 border-radius:16px;
-padding:30px;
+padding:25px;
 text-align:center;
 border:1px solid rgba(0,180,255,.25);
-box-shadow:0 0 25px rgba(0,180,255,.2);
+box-shadow:0 0 20px rgba(0,180,255,.2);
 }
 
 .disponivel{
@@ -67,27 +73,78 @@ border-color:#facc15;
 border-color:#ef4444;
 }
 
-.ranking-area{
-padding:40px;
+/* AREA INFERIOR */
+
+.dashboard-bottom{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:30px;
+
+padding:35px;
+
 }
 
-.ranking-area h2{
-color:#7dd3fc;
-margin-bottom:20px;
+.extra-card{
+
+background:#0b1220;
+
+border-radius:16px;
+
+padding:25px;
+
+border:1px solid rgba(0,180,255,.25);
+
+box-shadow:0 0 20px rgba(0,180,255,.2);
+
 }
+
+.extra-card h2{
+
+color:#7dd3fc;
+
+margin-bottom:15px;
+
+}
+
+/* RANKING */
 
 .ranking-item{
-padding:12px;
+
+padding:8px;
+
 border-bottom:1px solid rgba(255,255,255,.1);
-font-size:18px;
+
+font-size:16px;
+
 }
 
+/* FOOTER */
+
 footer{
+
 text-align:center;
-padding:10px;
+
+padding:12px;
+
 background:#050d1a;
+
 color:#94a3b8;
-margin-top:40px;
+
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+
+.dashboard-bottom{
+
+grid-template-columns:1fr;
+
+}
+
 }
 
 </style>
@@ -103,50 +160,111 @@ margin-top:40px;
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
 <div class="status-geral">
+
 Disponibilidade Geral: <span id="percentual">0%</span>
+
 </div>
 
 </header>
 
 <div class="grid" id="grid"></div>
 
-<div class="ranking-area">
+<div class="dashboard-bottom">
 
-<h2>Ranking de desempenho dos portais</h2>
+<div class="extra-card">
+
+<h2>Ranking de desempenho</h2>
 
 <div id="ranking"></div>
 
 </div>
 
+<div class="extra-card">
+
+<h2>Tempo médio de resposta</h2>
+
+<canvas id="grafico"></canvas>
+
+</div>
+
+</div>
+
 <footer>
+
 Centro de Monitoramento Digital • Governo Digital
+
 </footer>
 
 <script>
 
+let historicoTempo = []
+
+let historicoHora = []
+
+const ctx = document.getElementById("grafico")
+
+const grafico = new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:historicoHora,
+
+datasets:[{
+
+label:"Tempo médio (ms)",
+
+data:historicoTempo,
+
+borderColor:"#00b4ff",
+
+backgroundColor:"rgba(0,180,255,.2)",
+
+tension:0.4
+
+}]
+
+}
+
+})
+
 async function carregar(){
 
 const resposta = await fetch("/dados")
+
 const dados = await resposta.json()
 
 document.getElementById("percentual").innerText = dados.percentual + "%"
 
 const grid = document.getElementById("grid")
+
 grid.innerHTML=""
+
+let soma=0
 
 dados.portais.forEach(p=>{
 
 let classe="disponivel"
 
 if(p.status=="INSTÁVEL") classe="instavel"
+
 if(p.status=="INDISPONÍVEL") classe="indisponivel"
 
+soma+=p.tempo
+
 grid.innerHTML += `
+
 <div class="card ${classe}">
+
 <h2>${p.nome}</h2>
+
 <div>${p.status}</div>
+
 <div>Tempo: ${p.tempo} ms</div>
+
 </div>
+
 `
 
 })
@@ -155,19 +273,41 @@ grid.innerHTML += `
 
 const ranking = document.getElementById("ranking")
 
-const ordenado = [...dados.portais].sort((a,b)=>a.tempo-b.tempo)
+const ordenado=[...dados.portais].sort((a,b)=>a.tempo-b.tempo)
 
 ranking.innerHTML=""
 
 ordenado.forEach((p,i)=>{
 
 ranking.innerHTML += `
+
 <div class="ranking-item">
+
 ${i+1}º — ${p.nome} : ${p.tempo} ms
+
 </div>
+
 `
 
 })
+
+/* GRAFICO */
+
+let media=Math.round(soma/dados.portais.length)
+
+historicoTempo.push(media)
+
+historicoHora.push(new Date().toLocaleTimeString())
+
+if(historicoTempo.length>20){
+
+historicoTempo.shift()
+
+historicoHora.shift()
+
+}
+
+grafico.update()
 
 }
 
