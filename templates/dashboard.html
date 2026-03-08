@@ -21,51 +21,36 @@ color:white;
 
 header{
 background:#030712;
-padding:20px;
+padding:25px;
+text-align:center;
 border-bottom:1px solid #00b4ff;
 box-shadow:0 0 30px rgba(0,180,255,.25);
 }
 
-/* TOPO */
-
-.topo{
-display:flex;
-align-items:center;
-justify-content:center;
-position:relative;
-}
-
 /* LOGO */
 
-.logo{
-position:absolute;
-left:20px;
-}
-
 .logo img{
-height:120px;
-filter: drop-shadow(0 0 20px #00b4ff);
+height:130px;
+filter: drop-shadow(0 0 25px #00b4ff);
 }
 
 /* TITULO */
 
 h1{
-font-size:30px;
-margin:0;
+font-size:32px;
+margin:15px 0 5px 0;
 color:#00d4ff;
 letter-spacing:1px;
 text-shadow:0 0 15px rgba(0,212,255,.6);
-text-align:center;
 }
 
 /* STATUS GERAL */
 
 .status-geral{
-margin-top:10px;
-text-align:center;
 font-size:24px;
 color:#38bdf8;
 font-weight:bold;
+margin-bottom:10px;
 }
 
 /* GRID */
@@ -150,18 +135,8 @@ color:#94a3b8;
 
 @media (max-width:900px){
 
-.logo{
-position:static;
-text-align:center;
-margin-bottom:10px;
-}
-
 .logo img{
 height:95px;
-}
-
-.topo{
-flex-direction:column;
 }
 
 h1{
@@ -182,15 +157,11 @@ font-size:20px;
 
 <header>
 
-<div class="topo">
-
 <div class="logo">
 <img src="{{ url_for('static', filename='Governo Digital.png') }}">
 </div>
 
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
-
-</div>
 
 <div class="status-geral">
 Disponibilidade Geral: <span id="percentual">0%</span>
