@@ -77,15 +77,8 @@ border:1px solid rgba(0,180,255,.25);
 box-shadow:0 0 25px rgba(0,180,255,.2);
 }
 
-.card h2{
-font-size:24px;
-}
-
-/* STATUS */
-
 .disponivel{
 border-color:#22c55e;
-box-shadow:0 0 20px rgba(34,197,94,.4);
 }
 
 .instavel{
@@ -94,14 +87,6 @@ border-color:#facc15;
 
 .indisponivel{
 border-color:#ef4444;
-box-shadow:0 0 20px rgba(239,68,68,.7);
-animation:piscando 1s infinite;
-}
-
-@keyframes piscando{
-0%{opacity:1}
-50%{opacity:0.4}
-100%{opacity:1}
 }
 
 /* MAPA */
@@ -110,8 +95,6 @@ animation:piscando 1s infinite;
 height:420px;
 margin:40px;
 border-radius:16px;
-overflow:hidden;
-border:1px solid rgba(0,180,255,.25);
 }
 
 /* GRÁFICO */
@@ -120,13 +103,25 @@ border:1px solid rgba(0,180,255,.25);
 padding:40px;
 }
 
-canvas{
+/* RANKING */
+
+.ranking{
+padding:40px;
 background:#0b1220;
+margin:40px;
 border-radius:16px;
-padding:20px;
 }
 
-/* FOOTER */
+.ranking h2{
+color:#7dd3fc;
+margin-bottom:20px;
+}
+
+.ranking-item{
+padding:10px;
+border-bottom:1px solid rgba(255,255,255,.1);
+font-size:18px;
+}
 
 footer{
 text-align:center;
@@ -163,41 +158,20 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 <canvas id="graficoTempo"></canvas>
 </div>
 
+<div class="ranking">
+<h2>Ranking de desempenho dos portais</h2>
+<div id="rankingLista"></div>
+</div>
+
 <footer>
 Centro de Monitoramento Digital • Governo Digital
 </footer>
 
-<audio id="alertaSom">
-<source src="https://assets.mixkit.co/sfx/preview/mixkit-alert-alarm-1005.mp3">
-</audio>
-
 <script>
-
-/* MAPA */
 
 const mapa = L.map('mapa').setView([-15.5,-49.5],7)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
-
-/* DESENHAR LIMITE DE GOIÁS */
-
-fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson")
-.then(res=>res.json())
-.then(data=>{
-
-const goias = data.features.find(f=>f.properties.name==="Goiás")
-
-L.geoJSON(goias,{
-style:{
-color:"#00b4ff",
-weight:2,
-fillOpacity:0.05
-}
-}).addTo(mapa)
-
-})
-
-/* CIDADES */
 
 const cidades = {
 
@@ -212,8 +186,6 @@ const cidades = {
 }
 
 let marcadores={}
-
-/* GRÁFICO */
 
 let historicoTempo=[]
 let historicoHora=[]
@@ -245,18 +217,13 @@ const grid=document.getElementById("grid")
 grid.innerHTML=""
 
 let soma=0
-let alerta=false
 
 dados.portais.forEach(p=>{
 
 let classe="disponivel"
 
 if(p.status=="INSTÁVEL") classe="instavel"
-
-if(p.status=="INDISPONÍVEL" || p.status=="FORA DO AR"){
-classe="indisponivel"
-alerta=true
-}
+if(p.status=="INDISPONÍVEL") classe="indisponivel"
 
 soma+=p.tempo
 
@@ -270,24 +237,13 @@ grid.innerHTML+=`
 
 `
 
-/* MARCADORES */
-
 if(cidades[p.nome]){
 
-let cor="green"
-
-if(p.status=="INSTÁVEL") cor="yellow"
-if(p.status=="INDISPONÍVEL" || p.status=="FORA DO AR") cor="red"
-
-if(marcadores[p.nome]){
-
-marcadores[p.nome].setStyle({color:cor})
-
-}else{
+if(!marcadores[p.nome]){
 
 marcadores[p.nome]=L.circleMarker(cidades[p.nome],{
 radius:8,
-color:cor
+color:"green"
 }).addTo(mapa)
 
 }
@@ -296,9 +252,27 @@ color:cor
 
 })
 
-if(alerta){
-document.getElementById("alertaSom").play()
-}
+/* RANKING */
+
+const ranking=document.getElementById("rankingLista")
+
+const ordenado=[...dados.portais].sort((a,b)=>a.tempo-b.tempo)
+
+ranking.innerHTML=""
+
+ordenado.forEach((p,i)=>{
+
+ranking.innerHTML+=`
+
+<div class="ranking-item">
+
+${i+1}º — ${p.nome} : ${p.tempo} ms
+
+</div>
+
+`
+
+})
 
 let media=Math.round(soma/dados.portais.length)
 
@@ -306,8 +280,10 @@ historicoTempo.push(media)
 historicoHora.push(new Date().toLocaleTimeString())
 
 if(historicoTempo.length>20){
+
 historicoTempo.shift()
 historicoHora.shift()
+
 }
 
 grafico.update()
