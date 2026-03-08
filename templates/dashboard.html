@@ -19,17 +19,17 @@ margin:0;
 font-family:Segoe UI,Arial,sans-serif;
 background:#020617;
 color:white;
+overflow:hidden;
 }
 
 /* HEADER */
 
 header{
 background:#050d1a;
-padding:30px 20px;
+padding:25px;
 display:flex;
 flex-direction:column;
 align-items:center;
-text-align:center;
 border-bottom:1px solid rgba(0,180,255,.3);
 box-shadow:0 0 40px rgba(0,180,255,.2);
 }
@@ -38,7 +38,7 @@ box-shadow:0 0 40px rgba(0,180,255,.2);
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:15px;
+gap:10px;
 }
 
 .logo-area img{
@@ -49,12 +49,25 @@ filter: drop-shadow(0 0 15px #00b4ff);
 h1{
 font-size:32px;
 color:#7dd3fc;
+margin:0;
 }
 
 .status-geral{
 font-size:22px;
 color:#38bdf8;
-font-weight:bold;
+margin-top:5px;
+}
+
+/* TELAS */
+
+.tela{
+display:none;
+height:calc(100vh - 140px);
+overflow:auto;
+}
+
+.tela.ativa{
+display:block;
 }
 
 /* GRID */
@@ -89,45 +102,40 @@ border-color:#facc15;
 border-color:#ef4444;
 }
 
+/* RANKING */
+
+.ranking{
+padding:40px;
+}
+
+.ranking-item{
+padding:15px;
+border-bottom:1px solid rgba(255,255,255,.1);
+font-size:20px;
+}
+
 /* MAPA */
 
 #mapa{
-height:420px;
-margin:40px;
+height:80vh;
+margin:30px;
 border-radius:16px;
 }
 
-/* GRÁFICO */
+/* GRAFICO */
 
 .grafico-area{
 padding:40px;
 }
 
-/* RANKING */
-
-.ranking{
-padding:40px;
-background:#0b1220;
-margin:40px;
-border-radius:16px;
-}
-
-.ranking h2{
-color:#7dd3fc;
-margin-bottom:20px;
-}
-
-.ranking-item{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,.1);
-font-size:18px;
-}
-
 footer{
 text-align:center;
-padding:15px;
+padding:10px;
 background:#050d1a;
 color:#94a3b8;
+position:fixed;
+bottom:0;
+width:100%;
 }
 
 </style>
@@ -139,28 +147,61 @@ color:#94a3b8;
 <header>
 
 <div class="logo-area">
+
 <img src="{{ url_for('static', filename='Governo Digital.png') }}">
+
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
-</div>
 
 <div class="status-geral">
 Disponibilidade Geral: <span id="percentual">0%</span>
 </div>
 
+</div>
+
 </header>
+
+<!-- TELA 1 -->
+
+<div class="tela ativa" id="tela1">
 
 <div class="grid" id="grid"></div>
 
-<div id="mapa"></div>
-
-<div class="grafico-area">
-<h2 style="color:#7dd3fc;">Tempo médio de resposta</h2>
-<canvas id="graficoTempo"></canvas>
 </div>
 
+<!-- TELA 2 -->
+
+<div class="tela" id="tela2">
+
 <div class="ranking">
+
 <h2>Ranking de desempenho dos portais</h2>
+
 <div id="rankingLista"></div>
+
+</div>
+
+</div>
+
+<!-- TELA 3 -->
+
+<div class="tela" id="tela3">
+
+<div class="grafico-area">
+
+<h2>Tempo médio de resposta</h2>
+
+<canvas id="graficoTempo"></canvas>
+
+</div>
+
+</div>
+
+<!-- TELA 4 -->
+
+<div class="tela" id="tela4">
+
+<div id="mapa"></div>
+
 </div>
 
 <footer>
@@ -169,23 +210,25 @@ Centro de Monitoramento Digital • Governo Digital
 
 <script>
 
-const mapa = L.map('mapa').setView([-15.5,-49.5],7)
+/* MAPA */
+
+const mapa=L.map('mapa').setView([-15.5,-49.5],7)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
 
-const cidades = {
-
-"Valparaíso": [-16.065,-47.975],
-"Cidade Ocidental": [-16.076,-47.925],
-"Luziânia": [-16.252,-47.950],
-"São João d'Aliança": [-14.705,-47.522],
-"Alto Paraíso": [-14.130,-47.510],
-"Simolândia": [-14.464,-46.484],
-"Terezópolis": [-16.394,-48.948]
-
+const cidades={
+"Valparaíso":[-16.065,-47.975],
+"Cidade Ocidental":[-16.076,-47.925],
+"Luziânia":[-16.252,-47.950],
+"São João d'Aliança":[-14.705,-47.522],
+"Alto Paraíso":[-14.130,-47.510],
+"Simolândia":[-14.464,-46.484],
+"Terezópolis":[-16.394,-48.948]
 }
 
 let marcadores={}
+
+/* GRAFICO */
 
 let historicoTempo=[]
 let historicoHora=[]
@@ -222,8 +265,8 @@ dados.portais.forEach(p=>{
 
 let classe="disponivel"
 
-if(p.status=="INSTÁVEL") classe="instavel"
-if(p.status=="INDISPONÍVEL") classe="indisponivel"
+if(p.status=="INSTÁVEL")classe="instavel"
+if(p.status=="INDISPONÍVEL")classe="indisponivel"
 
 soma+=p.tempo
 
@@ -293,6 +336,26 @@ grafico.update()
 carregar()
 
 setInterval(carregar,30000)
+
+/* ROTACAO DE TELAS */
+
+let telaAtual=0
+
+const telas=document.querySelectorAll(".tela")
+
+function trocarTela(){
+
+telas.forEach(t=>t.classList.remove("ativa"))
+
+telaAtual++
+
+if(telaAtual>=telas.length)telaAtual=0
+
+telas[telaAtual].classList.add("ativa")
+
+}
+
+setInterval(trocarTela,15000)
 
 </script>
 
