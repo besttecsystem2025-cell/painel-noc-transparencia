@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 import requests
 import time
+import os
 from datetime import datetime
 
 app = Flask(__name__)
@@ -15,7 +16,6 @@ PORTAIS = {
     "Terezópolis": "https://transparencia.terezopolis.go.gov.br/"
 }
 
-
 def verificar_portal(nome, url):
 
     inicio = time.time()
@@ -25,67 +25,35 @@ def verificar_portal(nome, url):
         resposta = requests.get(
             url,
             timeout=10,
-            headers={"User-Agent": "Mozilla/5.0"},
-            allow_redirects=True,
-            verify=True
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            }
         )
 
         tempo = round((time.time() - inicio) * 1000)
 
-        html = resposta.text.lower()
+        if resposta.status_code == 200:
+            status = "DISPONÍVEL"
 
-        status = "DISPONÍVEL"
-
-        # STATUS HTTP
-        if resposta.status_code >= 500:
+        elif resposta.status_code >= 500:
             status = "ERRO SERVIDOR"
 
         elif resposta.status_code >= 400:
             status = "ERRO PÁGINA"
 
-        # REDIRECIONAMENTO
-        if len(resposta.history) > 3:
-            status = "REDIRECIONAMENTO"
-
-        # TAMANHO DA PÁGINA
-        if len(resposta.text) < 500 and status == "DISPONÍVEL":
-            status = "PÁGINA VAZIA"
-
-        # DETECTAR ERROS NO HTML
-        palavras_erro = [
-            "erro",
-            "error",
-            "exception",
-            "sql",
-            "fatal",
-            "internal server error",
-            "pagina nao encontrada",
-            "não encontrado"
-        ]
-
-        for palavra in palavras_erro:
-            if palavra in html:
-                status = "ERRO SISTEMA"
-                break
-
-        # PORTAL LENTO
-        if tempo > 2000 and status == "DISPONÍVEL":
-            status = "LENTO"
-
-    except requests.exceptions.SSLError:
-        status = "ERRO SSL"
-        tempo = 0
+        else:
+            status = "INSTÁVEL"
 
     except requests.exceptions.Timeout:
         status = "TIMEOUT"
         tempo = 0
 
     except requests.exceptions.ConnectionError:
-        status = "FORA DO AR"
+        status = "INDISPONÍVEL"
         tempo = 0
 
     except Exception:
-        status = "FALHA"
+        status = "ERRO"
         tempo = 0
 
     return {
@@ -94,11 +62,9 @@ def verificar_portal(nome, url):
         "tempo": tempo
     }
 
-
 @app.route("/")
 def index():
     return render_template("dashboard.html")
-
 
 @app.route("/dados")
 def dados():
@@ -128,7 +94,8 @@ def dados():
         "atualizado": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     })
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
 
+    port = int(os.environ.get("PORT", 10000))
+
+    app.run(host="0.0.0.0", port=port)
