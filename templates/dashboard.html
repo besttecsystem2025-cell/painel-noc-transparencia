@@ -173,26 +173,31 @@ Centro de Monitoramento Digital • Governo Digital
 
 <script>
 
-/* MAPA GOIÁS */
+/* MAPA */
 
-const mapa = L.map('mapa', {
-zoomControl:false,
-minZoom:7,
-maxZoom:10
-}).setView([-15.5,-49.5],7)
+const mapa = L.map('mapa').setView([-15.5,-49.5],7)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
 
-/* LIMITAR VISUALIZAÇÃO EM GOIÁS */
+/* DESENHAR LIMITE DE GOIÁS */
 
-const bounds = [
-[-18.5,-53],
-[-12.5,-45]
-]
+fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson")
+.then(res=>res.json())
+.then(data=>{
 
-mapa.setMaxBounds(bounds)
+const goias = data.features.find(f=>f.properties.name==="Goiás")
 
-/* CIDADES MONITORADAS */
+L.geoJSON(goias,{
+style:{
+color:"#00b4ff",
+weight:2,
+fillOpacity:0.05
+}
+}).addTo(mapa)
+
+})
+
+/* CIDADES */
 
 const cidades = {
 
@@ -226,13 +231,6 @@ borderColor:'#00b4ff',
 backgroundColor:'rgba(0,180,255,.2)',
 tension:0.4
 }]
-},
-options:{
-plugins:{legend:{labels:{color:'white'}}},
-scales:{
-x:{ticks:{color:'white'}},
-y:{ticks:{color:'white'}}
-}
 }
 })
 
@@ -272,7 +270,7 @@ grid.innerHTML+=`
 
 `
 
-/* MARCADORES NO MAPA */
+/* MARCADORES */
 
 if(cidades[p.nome]){
 
