@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify
 import requests
 import time
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -81,5 +82,6 @@ def dados():
 
 
 if __name__ == "__main__":
-    # 🔥 IMPORTANTE PARA RODAR ONLINE
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+  
