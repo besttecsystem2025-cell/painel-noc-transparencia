@@ -1,8 +1,8 @@
+
 from flask import Flask, render_template, jsonify
 import requests
 import time
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 
@@ -18,30 +18,67 @@ PORTAIS = {
 
 
 def verificar_portal(nome, url):
+
+    inicio = time.time()
+
     try:
-        inicio = time.time()
 
         resposta = requests.get(
             url,
             timeout=10,
             headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-            }
+                "User-Agent": "Mozilla/5.0"
+            },
+            verify=True
         )
 
         tempo = round((time.time() - inicio) * 1000)
+
         html = resposta.text.lower()
 
-        if resposta.status_code == 200:
-            if "404" in html or "500" in html or "erro" in html:
-                status = "INSTÁVEL"
-            else:
-                status = "DISPONÍVEL"
-        else:
-            status = "INSTÁVEL"
+        status = "DISPONÍVEL"
 
-    except:
-        status = "INDISPONÍVEL"
+        # ERROS HTTP
+        if resposta.status_code >= 500:
+            status = "ERRO SERVIDOR"
+
+        elif resposta.status_code >= 400:
+            status = "ERRO PÁGINA"
+
+        # PORTAL QUEBRADO
+        palavras_erro = [
+            "erro",
+            "error",
+            "exception",
+            "sql",
+            "não encontrado",
+            "pagina nao encontrada",
+            "internal server error"
+        ]
+
+        for palavra in palavras_erro:
+            if palavra in html:
+                status = "ERRO SISTEMA"
+                break
+
+        # PORTAL LENTO
+        if tempo > 2000 and status == "DISPONÍVEL":
+            status = "LENTO"
+
+    except requests.exceptions.SSLError:
+        status = "ERRO SSL"
+        tempo = 0
+
+    except requests.exceptions.Timeout:
+        status = "TIMEOUT"
+        tempo = 0
+
+    except requests.exceptions.ConnectionError:
+        status = "FORA DO AR"
+        tempo = 0
+
+    except Exception:
+        status = "FALHA"
         tempo = 0
 
     return {
@@ -58,17 +95,22 @@ def index():
 
 @app.route("/dados")
 def dados():
+
     resultados = []
+
     disponiveis = 0
 
     for nome, url in PORTAIS.items():
+
         resultado = verificar_portal(nome, url)
+
         resultados.append(resultado)
 
         if resultado["status"] == "DISPONÍVEL":
             disponiveis += 1
 
     total = len(PORTAIS)
+
     percentual = round((disponiveis / total) * 100)
 
     return jsonify({
@@ -82,6 +124,4 @@ def dados():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-  
+    app.run(host="0.0.0.0", port=5000)
