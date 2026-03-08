@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, jsonify
 import requests
 import time
@@ -27,6 +26,7 @@ def verificar_portal(nome, url):
             url,
             timeout=10,
             headers={"User-Agent": "Mozilla/5.0"},
+            allow_redirects=True,
             verify=True
         )
 
@@ -36,12 +36,20 @@ def verificar_portal(nome, url):
 
         status = "DISPONÍVEL"
 
-        # ERROS HTTP
+        # STATUS HTTP
         if resposta.status_code >= 500:
             status = "ERRO SERVIDOR"
 
         elif resposta.status_code >= 400:
             status = "ERRO PÁGINA"
+
+        # REDIRECIONAMENTO
+        if len(resposta.history) > 3:
+            status = "REDIRECIONAMENTO"
+
+        # TAMANHO DA PÁGINA
+        if len(resposta.text) < 500 and status == "DISPONÍVEL":
+            status = "PÁGINA VAZIA"
 
         # DETECTAR ERROS NO HTML
         palavras_erro = [
@@ -49,6 +57,7 @@ def verificar_portal(nome, url):
             "error",
             "exception",
             "sql",
+            "fatal",
             "internal server error",
             "pagina nao encontrada",
             "não encontrado"
@@ -122,3 +131,4 @@ def dados():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
