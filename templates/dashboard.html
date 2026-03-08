@@ -67,11 +67,27 @@ border-color:#facc15;
 border-color:#ef4444;
 }
 
+.ranking-area{
+padding:40px;
+}
+
+.ranking-area h2{
+color:#7dd3fc;
+margin-bottom:20px;
+}
+
+.ranking-item{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,.1);
+font-size:18px;
+}
+
 footer{
 text-align:center;
 padding:10px;
 background:#050d1a;
 color:#94a3b8;
+margin-top:40px;
 }
 
 </style>
@@ -93,6 +109,14 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 </header>
 
 <div class="grid" id="grid"></div>
+
+<div class="ranking-area">
+
+<h2>Ranking de desempenho dos portais</h2>
+
+<div id="ranking"></div>
+
+</div>
 
 <footer>
 Centro de Monitoramento Digital • Governo Digital
@@ -127,6 +151,24 @@ grid.innerHTML += `
 
 })
 
+/* RANKING */
+
+const ranking = document.getElementById("ranking")
+
+const ordenado = [...dados.portais].sort((a,b)=>a.tempo-b.tempo)
+
+ranking.innerHTML=""
+
+ordenado.forEach((p,i)=>{
+
+ranking.innerHTML += `
+<div class="ranking-item">
+${i+1}º — ${p.nome} : ${p.tempo} ms
+</div>
+`
+
+})
+
 }
 
 carregar()
@@ -137,4 +179,3 @@ setInterval(carregar,30000)
 
 </body>
 </html>
-
