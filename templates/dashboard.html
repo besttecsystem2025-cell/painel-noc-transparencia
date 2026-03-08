@@ -1,27 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-<title>Teste</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Centro de Monitoramento - Governo Digital</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI,Arial,sans-serif;
+background:#020617;
+color:white;
+}
+
+header{
+background:#050d1a;
+padding:30px;
+text-align:center;
+border-bottom:1px solid rgba(0,180,255,.3);
+box-shadow:0 0 40px rgba(0,180,255,.2);
+}
+
+header img{
+height:120px;
+filter:drop-shadow(0 0 15px #00b4ff);
+}
+
+h1{
+color:#7dd3fc;
+margin-top:10px;
+}
+
+.status-geral{
+font-size:20px;
+color:#38bdf8;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:30px;
+padding:40px;
+}
+
+.card{
+background:#0b1220;
+border-radius:16px;
+padding:30px;
+text-align:center;
+border:1px solid rgba(0,180,255,.25);
+box-shadow:0 0 25px rgba(0,180,255,.2);
+}
+
+.disponivel{
+border-color:#22c55e;
+}
+
+.instavel{
+border-color:#facc15;
+}
+
+.indisponivel{
+border-color:#ef4444;
+}
+
+footer{
+text-align:center;
+padding:10px;
+background:#050d1a;
+color:#94a3b8;
+}
+
+</style>
+
 </head>
 
-<body style="background:black;color:white;font-family:Arial">
+<body>
 
-<h1>Painel funcionando</h1>
+<header>
 
-<div id="dados"></div>
+<img src="{{ url_for('static', filename='Governo Digital.png') }}">
+
+<h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
+
+<div class="status-geral">
+Disponibilidade Geral: <span id="percentual">0%</span>
+</div>
+
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+Centro de Monitoramento Digital • Governo Digital
+</footer>
 
 <script>
 
-fetch("/dados")
-.then(res => res.json())
-.then(data => {
+async function carregar(){
 
-document.getElementById("dados").innerHTML =
-"Portais monitorados: " + data.total
+const resposta = await fetch("/dados")
+const dados = await resposta.json()
+
+document.getElementById("percentual").innerText = dados.percentual + "%"
+
+const grid = document.getElementById("grid")
+grid.innerHTML=""
+
+dados.portais.forEach(p=>{
+
+let classe="disponivel"
+
+if(p.status=="INSTÁVEL") classe="instavel"
+if(p.status=="INDISPONÍVEL") classe="indisponivel"
+
+grid.innerHTML += `
+<div class="card ${classe}">
+<h2>${p.nome}</h2>
+<div>${p.status}</div>
+<div>Tempo: ${p.tempo} ms</div>
+</div>
+`
 
 })
+
+}
+
+carregar()
+
+setInterval(carregar,30000)
 
 </script>
 
 </body>
 </html>
+
