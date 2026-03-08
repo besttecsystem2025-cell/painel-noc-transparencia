@@ -8,6 +8,9 @@
 <title>Centro de Monitoramento - Governo Digital</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
 
@@ -26,7 +29,6 @@ padding:30px 20px;
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:center;
 text-align:center;
 border-bottom:1px solid rgba(0,180,255,.3);
 box-shadow:0 0 40px rgba(0,180,255,.2);
@@ -41,22 +43,18 @@ gap:15px;
 
 .logo-area img{
 height:120px;
-max-width:90%;
 filter: drop-shadow(0 0 15px #00b4ff);
 }
 
 h1{
 font-size:32px;
-margin:0;
 color:#7dd3fc;
-letter-spacing:1px;
 }
 
 .status-geral{
 font-size:22px;
 color:#38bdf8;
 font-weight:bold;
-margin-top:10px;
 }
 
 /* GRID */
@@ -77,17 +75,10 @@ padding:30px;
 text-align:center;
 border:1px solid rgba(0,180,255,.25);
 box-shadow:0 0 25px rgba(0,180,255,.2);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-box-shadow:0 0 35px rgba(0,180,255,.5);
 }
 
 .card h2{
-font-size:26px;
-margin-bottom:10px;
+font-size:24px;
 }
 
 /* STATUS */
@@ -99,24 +90,19 @@ box-shadow:0 0 20px rgba(34,197,94,.4);
 
 .instavel{
 border-color:#facc15;
-box-shadow:0 0 20px rgba(250,204,21,.4);
 }
 
 .indisponivel{
 border-color:#ef4444;
-box-shadow:0 0 20px rgba(239,68,68,.6);
-animation:pulse 1.6s infinite;
 }
 
-.status{
-font-size:20px;
-font-weight:bold;
-margin:10px 0;
-}
+/* MAPA */
 
-.tempo{
-font-size:16px;
-opacity:.8;
+#mapa{
+height:400px;
+margin:40px;
+border-radius:16px;
+overflow:hidden;
 }
 
 /* GRÁFICO */
@@ -129,7 +115,6 @@ canvas{
 background:#0b1220;
 border-radius:16px;
 padding:20px;
-border:1px solid rgba(0,180,255,.25);
 }
 
 /* FOOTER */
@@ -138,30 +123,7 @@ footer{
 text-align:center;
 padding:15px;
 background:#050d1a;
-font-size:14px;
 color:#94a3b8;
-}
-
-/* ALERTA */
-
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.03)}
-100%{transform:scale(1)}
-}
-
-/* RESPONSIVO */
-
-@media (max-width:700px){
-
-h1{
-font-size:26px;
-}
-
-.logo-area img{
-height:90px;
-}
-
 }
 
 </style>
@@ -173,11 +135,8 @@ height:90px;
 <header>
 
 <div class="logo-area">
-
 <img src="{{ url_for('static', filename='Governo Digital.png') }}">
-
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
-
 </div>
 
 <div class="status-geral">
@@ -188,12 +147,11 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <div class="grid" id="grid"></div>
 
+<div id="mapa"></div>
+
 <div class="grafico-area">
-
 <h2 style="color:#7dd3fc;">Tempo médio de resposta</h2>
-
 <canvas id="graficoTempo"></canvas>
-
 </div>
 
 <footer>
@@ -202,29 +160,41 @@ Centro de Monitoramento Digital • Governo Digital
 
 <script>
 
-let historicoTempo = []
-let historicoHora = []
+/* MAPA */
+
+const mapa = L.map('mapa').setView([-14.5, -49.5], 7)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa)
+
+const cidades = {
+"Valparaíso": [-16.065, -47.975],
+"Cidade Ocidental": [-16.076, -47.925],
+"Luziânia": [-16.252, -47.950],
+"São João d'Aliança": [-14.705, -47.522],
+"Alto Paraíso": [-14.130, -47.510],
+"Simolândia": [-14.464, -46.484],
+"Terezópolis": [-16.394, -48.948]
+}
+
+let marcadores = {}
+
+/* GRÁFICO */
+
+let historicoTempo=[]
+let historicoHora=[]
 
 const ctx = document.getElementById('graficoTempo')
 
-const grafico = new Chart(ctx, {
-type: 'line',
-data: {
-labels: historicoHora,
-datasets: [{
-label: 'Tempo médio (ms)',
-data: historicoTempo,
-borderColor: '#00b4ff',
-backgroundColor: 'rgba(0,180,255,.2)',
-tension:0.3
+const grafico = new Chart(ctx,{
+type:'line',
+data:{
+labels:historicoHora,
+datasets:[{
+label:'Tempo médio (ms)',
+data:historicoTempo,
+borderColor:'#00b4ff',
+backgroundColor:'rgba(0,180,255,.2)'
 }]
-},
-options:{
-plugins:{legend:{labels:{color:'white'}}},
-scales:{
-x:{ticks:{color:'white'}},
-y:{ticks:{color:'white'}}
-}
 }
 })
 
@@ -233,12 +203,12 @@ async function carregar(){
 const resposta = await fetch("/dados")
 const dados = await resposta.json()
 
+document.getElementById("percentual").innerText = dados.percentual + "%"
+
 const grid = document.getElementById("grid")
 grid.innerHTML=""
 
-document.getElementById("percentual").innerText = dados.percentual + "%"
-
-let somaTempo = 0
+let soma=0
 
 dados.portais.forEach(p=>{
 
@@ -247,28 +217,48 @@ let classe="disponivel"
 if(p.status=="INSTÁVEL") classe="instavel"
 if(p.status=="INDISPONÍVEL") classe="indisponivel"
 
-somaTempo += p.tempo
+soma+=p.tempo
 
 grid.innerHTML+=`
 
 <div class="card ${classe}">
 <h2>${p.nome}</h2>
-<div class="status">${p.status}</div>
-<div class="tempo">Tempo: ${p.tempo} ms</div>
+<div>${p.status}</div>
+<div>Tempo: ${p.tempo} ms</div>
 </div>
 
 `
 
+/* MAPA */
+
+if(cidades[p.nome]){
+
+let cor="green"
+
+if(p.status=="INSTÁVEL") cor="yellow"
+if(p.status=="INDISPONÍVEL") cor="red"
+
+if(marcadores[p.nome]){
+marcadores[p.nome].setStyle({color:cor})
+}else{
+
+marcadores[p.nome]=L.circleMarker(cidades[p.nome],{
+radius:8,
+color:cor
+}).addTo(mapa)
+
+}
+
+}
+
 })
 
-let media = Math.round(somaTempo / dados.portais.length)
-
-let agora = new Date().toLocaleTimeString()
+let media=Math.round(soma/dados.portais.length)
 
 historicoTempo.push(media)
-historicoHora.push(agora)
+historicoHora.push(new Date().toLocaleTimeString())
 
-if(historicoTempo.length > 20){
+if(historicoTempo.length>20){
 historicoTempo.shift()
 historicoHora.shift()
 }
