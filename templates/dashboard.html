@@ -21,7 +21,6 @@ body{
 font-family:Arial, Helvetica, sans-serif;
 background:#020617;
 color:white;
-
 overflow:hidden;
 
 }
@@ -37,7 +36,7 @@ padding:20px;
 
 header img{
 
-height:90px;
+height:110px;
 filter:drop-shadow(0 0 20px #00b4ff);
 
 }
@@ -46,7 +45,7 @@ h1{
 
 margin-top:10px;
 color:#7dd3fc;
-font-size:28px;
+font-size:32px;
 
 }
 
@@ -63,13 +62,11 @@ margin-top:6px;
 
 display:grid;
 
-grid-template-columns:45% 55%;
+grid-template-columns:48% 52%;
 
 height:calc(100vh - 140px);
 
 padding:20px;
-
-gap:10px;
 
 align-items:center;
 
@@ -81,8 +78,8 @@ align-items:center;
 
 position:relative;
 
-width:420px;
-height:420px;
+width:520px;
+height:520px;
 
 margin:auto;
 
@@ -102,14 +99,18 @@ object-fit:contain;
 
 position:absolute;
 
-width:70px;
-height:70px;
+width:40px;
+height:40px;
 
 border-radius:50%;
 
 border:2px solid #22c55e;
 
-animation:radar 2.5s linear infinite;
+animation:radar 2s linear infinite;
+
+display:flex;
+align-items:center;
+justify-content:center;
 
 }
 
@@ -117,19 +118,12 @@ animation:radar 2.5s linear infinite;
 
 content:"";
 
-position:absolute;
-
-width:8px;
-height:8px;
+width:6px;
+height:6px;
 
 background:#22c55e;
 
 border-radius:50%;
-
-top:50%;
-left:50%;
-
-transform:translate(-50%,-50%);
 
 box-shadow:0 0 12px #22c55e;
 
@@ -139,29 +133,29 @@ box-shadow:0 0 12px #22c55e;
 
 0%{
 
-transform:scale(0.3);
+transform:scale(.5);
 opacity:1;
 
 }
 
 100%{
 
-transform:scale(1.8);
+transform:scale(1.6);
 opacity:0;
 
 }
 
 }
 
-/* POSIÇÕES */
+/* POSIÇÕES DAS CIDADES */
 
-#altoparaiso{top:40px;left:190px;}
-#saojoao{top:130px;left:250px;}
-#luziania{top:200px;left:240px;}
-#cidadeocidental{top:220px;left:110px;}
-#valparaiso{top:200px;left:160px;}
-#terezopolis{top:290px;left:180px;}
-#simolandia{top:250px;left:300px;}
+#altoparaiso{top:70px;left:230px;}
+#saojoao{top:160px;left:290px;}
+#luziania{top:260px;left:270px;}
+#cidadeocidental{top:300px;left:140px;}
+#valparaiso{top:260px;left:200px;}
+#terezopolis{top:350px;left:230px;}
+#simolandia{top:310px;left:340px;}
 
 /* CARDS */
 
@@ -169,9 +163,11 @@ opacity:0;
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 
 gap:15px;
+
+padding-right:30px;
 
 }
 
@@ -181,9 +177,11 @@ gap:15px;
 
 background:#0b1220;
 
-border-radius:12px;
+border-radius:10px;
 
-padding:15px;
+padding:14px;
+
+font-size:14px;
 
 text-align:center;
 
@@ -199,7 +197,9 @@ transition:.3s;
 
 .card:hover{
 
-transform:scale(1.07);
+transform:scale(1.05);
+
+box-shadow:0 0 25px #00b4ff;
 
 }
 
@@ -213,7 +213,7 @@ box-shadow:0 0 10px rgba(0,180,255,.3);
 
 to{
 
-box-shadow:0 0 30px rgba(0,180,255,.8);
+box-shadow:0 0 25px rgba(0,180,255,.9);
 
 }
 
@@ -221,7 +221,7 @@ box-shadow:0 0 30px rgba(0,180,255,.8);
 
 /* RESPONSIVO */
 
-@media(max-width:1000px){
+@media(max-width:1100px){
 
 .container{
 
@@ -236,6 +236,13 @@ overflow:auto;
 body{
 
 overflow:auto;
+
+}
+
+.mapa{
+
+width:400px;
+height:400px;
 
 }
 
@@ -254,9 +261,7 @@ overflow:auto;
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
 <div class="status">
-
 Disponibilidade Geral: <span id="percentual">0%</span>
-
 </div>
 
 </header>
