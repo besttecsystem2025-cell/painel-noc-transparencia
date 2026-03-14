@@ -6,22 +6,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Centro de Monitoramento</title>
+<title>Monitoramento Transparência</title>
 
 <style>
 
 *{
 box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
 body{
 
-margin:0;
 font-family:Segoe UI;
 background:#020617;
 color:white;
-overflow:hidden;
-height:100vh;
+overflow-x:hidden;
 
 }
 
@@ -30,29 +30,29 @@ height:100vh;
 header{
 
 text-align:center;
-padding:10px;
+padding:20px;
 
 }
 
 header img{
 
-height:90px;
+height:100px;
 filter:drop-shadow(0 0 20px #00b4ff);
 
 }
 
 h1{
 
-margin:5px 0;
+margin-top:10px;
+font-size:30px;
 color:#7dd3fc;
-font-size:28px;
 
 }
 
 .status{
 
 color:#38bdf8;
-font-size:16px;
+margin-top:5px;
 
 }
 
@@ -62,10 +62,9 @@ font-size:16px;
 
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:20px;
+gap:40px;
 
-height:calc(100vh - 120px);
-padding:10px;
+padding:20px;
 
 }
 
@@ -74,56 +73,85 @@ padding:10px;
 .mapa{
 
 position:relative;
-
 display:flex;
 justify-content:center;
-align-items:flex-start;
 
 }
 
 .mapa img{
 
-width:80%;
-max-width:420px;
+width:100%;
+max-width:520px;
 
 }
 
-/* SVG overlay */
+/* PONTOS */
 
-.overlay{
+.ponto{
 
 position:absolute;
-width:80%;
-max-width:420px;
-pointer-events:none;
+
+width:14px;
+height:14px;
+
+border-radius:50%;
+
+background:#22c55e;
+
+box-shadow:0 0 15px #22c55e;
+
+animation:pulse 1.5s infinite;
 
 }
 
-/* CIDADES */
+/* POSIÇÃO DAS CIDADES */
 
-.cidade{
+#altoparaiso{
 
-fill:rgba(34,197,94,0.35);
-stroke:#22c55e;
-stroke-width:2;
-
-animation:pulse 2s infinite;
+top:16%;
+left:47%;
 
 }
 
-/* STATUS */
+#saojoao{
 
-.instavel{
-
-fill:rgba(250,204,21,.35);
-stroke:#facc15;
+top:31%;
+left:60%;
 
 }
 
-.indisponivel{
+#luziania{
 
-fill:rgba(239,68,68,.35);
-stroke:#ef4444;
+top:47%;
+left:57%;
+
+}
+
+#cidadeocidental{
+
+top:52%;
+left:33%;
+
+}
+
+#valparaiso{
+
+top:46%;
+left:41%;
+
+}
+
+#terezopolis{
+
+top:64%;
+left:46%;
+
+}
+
+#simolandia{
+
+top:59%;
+left:71%;
 
 }
 
@@ -131,9 +159,9 @@ stroke:#ef4444;
 
 @keyframes pulse{
 
-0%{opacity:.5}
-50%{opacity:1}
-100%{opacity:.5}
+0%{transform:scale(1);opacity:.6}
+50%{transform:scale(1.6);opacity:1}
+100%{transform:scale(1);opacity:.6}
 
 }
 
@@ -145,9 +173,7 @@ display:grid;
 
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 
-gap:15px;
-
-align-content:start;
+gap:20px;
 
 }
 
@@ -159,39 +185,40 @@ background:#0b1220;
 
 border-radius:12px;
 
-padding:15px;
+padding:18px;
 
 text-align:center;
 
 border:1px solid rgba(0,180,255,.3);
 
-box-shadow:0 0 20px rgba(0,180,255,.2);
+box-shadow:0 0 15px rgba(0,180,255,.4);
+
+transition:0.3s;
 
 animation:glow 4s infinite alternate;
 
 }
 
+.card:hover{
+
+transform:scale(1.05);
+
+}
+
 @keyframes glow{
 
-from{box-shadow:0 0 10px rgba(0,180,255,.2)}
-to{box-shadow:0 0 25px rgba(0,180,255,.6)}
+from{box-shadow:0 0 10px rgba(0,180,255,.3)}
+to{box-shadow:0 0 25px rgba(0,180,255,.7)}
 
 }
 
 /* RESPONSIVO */
 
-@media (max-width:1200px){
+@media (max-width:1100px){
 
 .container{
 
 grid-template-columns:1fr;
-overflow:auto;
-
-}
-
-body{
-
-overflow:auto;
 
 }
 
@@ -219,50 +246,23 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <div class="container">
 
+<!-- MAPA -->
+
 <div class="mapa">
 
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
 
-<svg class="overlay" viewBox="0 0 400 400">
-
-<!-- ALTO PARAISO -->
-<polygon id="altoparaiso"
-points="150,40 190,35 210,60 170,70"
-class="cidade"/>
-
-<!-- SAO JOAO -->
-<polygon id="saojoao"
-points="240,120 280,110 300,140 260,160"
-class="cidade"/>
-
-<!-- LUZIANIA -->
-<polygon id="luziania"
-points="230,200 270,190 290,220 250,240"
-class="cidade"/>
-
-<!-- CIDADE OCIDENTAL -->
-<polygon id="cidadeocidental"
-points="130,230 170,220 190,250 150,270"
-class="cidade"/>
-
-<!-- VALPARAISO -->
-<polygon id="valparaiso"
-points="180,200 210,190 220,210 190,220"
-class="cidade"/>
-
-<!-- TEREZOPOLIS -->
-<polygon id="terezopolis"
-points="200,260 240,250 260,280 220,300"
-class="cidade"/>
-
-<!-- SIMOLANDIA -->
-<polygon id="simolandia"
-points="300,240 340,230 360,260 320,280"
-class="cidade"/>
-
-</svg>
+<div id="altoparaiso" class="ponto"></div>
+<div id="saojoao" class="ponto"></div>
+<div id="luziania" class="ponto"></div>
+<div id="cidadeocidental" class="ponto"></div>
+<div id="valparaiso" class="ponto"></div>
+<div id="terezopolis" class="ponto"></div>
+<div id="simolandia" class="ponto"></div>
 
 </div>
+
+<!-- CARDS -->
 
 <div class="cards" id="grid"></div>
 
@@ -282,18 +282,6 @@ const nomes = {
 
 }
 
-const idsMapa = {
-
-"Cidade Ocidental":"cidadeocidental",
-"Valparaíso":"valparaiso",
-"São João d'Aliança":"saojoao",
-"Alto Paraíso":"altoparaiso",
-"Luziânia":"luziania",
-"Simolândia":"simolandia",
-"Terezópolis":"terezopolis"
-
-}
-
 async function carregar(){
 
 const resposta = await fetch("/dados")
@@ -307,11 +295,6 @@ const grid = document.getElementById("grid")
 grid.innerHTML=""
 
 dados.portais.forEach(p=>{
-
-let classe="cidade"
-
-if(p.status=="INSTÁVEL")classe="cidade instavel"
-if(p.status=="INDISPONÍVEL")classe="cidade indisponivel"
 
 let nomeCompleto = nomes[p.nome]
 
@@ -333,12 +316,6 @@ ${p.tempo} ms
 
 `
 
-let id = idsMapa[p.nome]
-
-let cidade = document.getElementById(id)
-
-cidade.setAttribute("class",classe)
-
 })
 
 }
@@ -350,5 +327,4 @@ setInterval(carregar,30000)
 </script>
 
 </body>
-
 </html>
