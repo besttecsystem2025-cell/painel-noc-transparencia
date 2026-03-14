@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Centro de Monitoramento - Governo Digital</title>
+<title>Centro de Monitoramento</title>
 
 <style>
 
@@ -15,6 +15,7 @@ margin:0;
 font-family:Segoe UI;
 background:#020617;
 color:white;
+
 height:100vh;
 overflow:hidden;
 }
@@ -22,77 +23,88 @@ overflow:hidden;
 /* HEADER */
 
 header{
+
 text-align:center;
-padding:20px 10px;
+padding:20px;
+
 }
 
 header img{
+
 height:120px;
-filter:drop-shadow(0 0 20px #00b4ff);
+filter:drop-shadow(0 0 25px #00b4ff);
+
 }
 
 h1{
-color:#7dd3fc;
+
 margin:10px 0;
+color:#7dd3fc;
 font-size:32px;
+
 }
 
-.status{
+.status-geral{
+
 color:#38bdf8;
-font-size:18px;
+font-size:20px;
+
 }
 
-/* LAYOUT */
+/* LAYOUT PRINCIPAL */
 
 .container{
 
 display:flex;
-height:70vh;
+
+height:75vh;
+
+align-items:center;
+
+justify-content:center;
+
+gap:40px;
+
+padding:20px;
 
 }
 
 /* MAPA */
 
-.mapa-area{
-
-flex:1;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-}
-
 .mapa{
 
 position:relative;
-width:90%;
-max-width:520px;
+
+width:40vw;
+
+max-width:550px;
 
 }
 
 .mapa img{
+
 width:100%;
+
 }
 
-/* PONTOS */
+/* BOLINHAS */
 
 .ponto{
 
 position:absolute;
+
 width:14px;
 height:14px;
 
 border-radius:50%;
+
 border:2px solid white;
 
-animation:pulse 2s infinite;
+background:#22c55e;
+
+animation:pulse 1.5s infinite;
 
 }
-
-.verde{background:#22c55e;}
-.amarelo{background:#facc15;}
-.vermelho{background:#ef4444;}
 
 @keyframes pulse{
 
@@ -102,44 +114,43 @@ animation:pulse 2s infinite;
 
 }
 
-/* POSIÇÕES DAS CIDADES (RESPONSIVAS) */
+/* POSIÇÃO DAS CIDADES */
 
-#cidadeocidental{top:60%;left:35%;}
-#valparaiso{top:58%;left:40%;}
-#luziania{top:50%;left:55%;}
-#saojoao{top:35%;left:60%;}
-#altoparaiso{top:25%;left:45%;}
-#simolandia{top:58%;left:70%;}
-#terezopolis{top:70%;left:50%;}
+#cidadeocidental{top:62%;left:33%;}
+#valparaiso{top:60%;left:40%;}
+#luziania{top:50%;left:56%;}
+#saojoao{top:38%;left:60%;}
+#altoparaiso{top:28%;left:45%;}
+#simolandia{top:60%;left:70%;}
+#terezopolis{top:72%;left:50%;}
 
 /* CARDS */
 
 .cards{
 
-flex:1;
+width:40vw;
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+grid-template-columns:repeat(2,1fr);
 
-gap:15px;
-
-align-content:center;
-
-padding:10px;
+gap:20px;
 
 }
 
 .card{
 
 background:#0b1220;
+
 border-radius:12px;
-padding:15px;
+
+padding:18px;
+
 text-align:center;
 
 border:1px solid rgba(0,180,255,.3);
 
-box-shadow:0 0 15px rgba(0,180,255,.4);
+box-shadow:0 0 20px rgba(0,180,255,.3);
 
 transition:.3s;
 
@@ -148,43 +159,61 @@ transition:.3s;
 .card:hover{
 
 transform:scale(1.05);
-box-shadow:0 0 25px #00b4ff;
+
+box-shadow:0 0 35px #00b4ff;
 
 }
 
-/* STATUS */
-
 .disponivel{
+
 border-color:#22c55e;
+
 }
 
 .instavel{
+
 border-color:#facc15;
+
 }
 
 .indisponivel{
+
 border-color:#ef4444;
+
 }
 
 /* RESPONSIVO */
 
-@media (max-width:900px){
+@media (max-width:1000px){
 
 .container{
+
 flex-direction:column;
+
 height:auto;
+
+overflow:auto;
+
 }
 
 body{
+
 overflow:auto;
+
 }
 
-header img{
-height:90px;
+.mapa{
+
+width:80vw;
+
 }
 
-h1{
-font-size:26px;
+.cards{
+
+width:90vw;
+
+grid-template-columns:1fr;
+
 }
 
 }
@@ -201,7 +230,7 @@ font-size:26px;
 
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
-<div class="status">
+<div class="status-geral">
 
 Disponibilidade Geral: <span id="percentual">0%</span>
 
@@ -211,21 +240,23 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <div class="container">
 
-<div class="mapa-area">
-
 <div class="mapa">
 
-<img src="{{ url_for('static', filename='mapa_goias.png') }}">
+<img src="{{ url_for('static', filename='mapa-goias.png') }}">
 
-<div id="cidadeocidental" class="ponto verde"></div>
-<div id="valparaiso" class="ponto verde"></div>
-<div id="luziania" class="ponto verde"></div>
-<div id="saojoao" class="ponto verde"></div>
-<div id="altoparaiso" class="ponto verde"></div>
-<div id="simolandia" class="ponto verde"></div>
-<div id="terezopolis" class="ponto verde"></div>
+<div id="cidadeocidental" class="ponto"></div>
 
-</div>
+<div id="valparaiso" class="ponto"></div>
+
+<div id="luziania" class="ponto"></div>
+
+<div id="saojoao" class="ponto"></div>
+
+<div id="altoparaiso" class="ponto"></div>
+
+<div id="simolandia" class="ponto"></div>
+
+<div id="terezopolis" class="ponto"></div>
 
 </div>
 
@@ -238,11 +269,17 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 const nomes = {
 
 "Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
+
 "Valparaíso":"Câmara Municipal de Valparaíso",
+
 "São João d'Aliança":"Câmara Municipal de São João d'Aliança",
+
 "Alto Paraíso":"Câmara Municipal de Alto Paraíso",
+
 "Luziânia":"Câmara Municipal de Luziânia",
+
 "Simolândia":"Prefeitura de Simolândia",
+
 "Terezópolis":"Prefeitura de Terezópolis"
 
 }
@@ -264,6 +301,7 @@ dados.portais.forEach(p=>{
 let classe="disponivel"
 
 if(p.status=="INSTÁVEL")classe="instavel"
+
 if(p.status=="INDISPONÍVEL")classe="indisponivel"
 
 let nomeCompleto = nomes[p.nome]
