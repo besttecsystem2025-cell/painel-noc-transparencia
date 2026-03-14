@@ -11,11 +11,15 @@
 <style>
 
 body{
+
 margin:0;
-font-family:Segoe UI,Arial;
+
+font-family:Segoe UI;
+
 background:#020617;
+
 color:white;
-overflow:hidden;
+
 }
 
 /* HEADER */
@@ -23,92 +27,56 @@ overflow:hidden;
 header{
 
 text-align:center;
+
 padding:20px;
 
 }
 
 header img{
-height:80px;
+
+height:70px;
+
 filter:drop-shadow(0 0 10px #00b4ff);
+
 }
 
 h1{
+
 color:#7dd3fc;
+
 margin:10px 0;
-font-size:28px;
+
+font-size:26px;
+
 }
 
-.status-geral{
+.status{
+
 color:#38bdf8;
-font-size:18px;
-}
-
-/* CARDS */
-
-.cards{
-
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:12px;
-
-padding:10px 30px;
 
 }
 
-.card{
+/* LAYOUT PRINCIPAL */
 
-background:#0b1220;
+.container{
 
-border-radius:10px;
+display:flex;
 
-padding:12px;
+height:80vh;
 
-text-align:center;
-
-font-size:14px;
-
-border:1px solid rgba(0,180,255,.2);
-
-box-shadow:0 0 10px rgba(0,180,255,.2);
-
-transition:.3s;
-
-}
-
-.card:hover{
-
-transform:scale(1.05);
-
-}
-
-/* STATUS */
-
-.disponivel{
-border-color:#22c55e;
-box-shadow:0 0 15px rgba(34,197,94,.6);
-}
-
-.instavel{
-border-color:#facc15;
-box-shadow:0 0 15px rgba(250,204,21,.6);
-}
-
-.indisponivel{
-border-color:#ef4444;
-box-shadow:0 0 15px rgba(239,68,68,.8);
 }
 
 /* MAPA */
 
 .mapa-area{
 
-display:flex;
+flex:1;
 
-justify-content:center;
+display:flex;
 
 align-items:center;
 
-height:55vh;
+justify-content:center;
 
 }
 
@@ -116,7 +84,9 @@ height:55vh;
 
 position:relative;
 
-width:600px;
+width:90%;
+
+max-width:550px;
 
 }
 
@@ -143,8 +113,84 @@ border:2px solid white;
 }
 
 .verde{background:#22c55e;}
+
 .amarelo{background:#facc15;}
+
 .vermelho{background:#ef4444;}
+
+/* CARDS */
+
+.cards{
+
+flex:1;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+
+gap:10px;
+
+padding:20px;
+
+align-content:start;
+
+}
+
+.card{
+
+background:#0b1220;
+
+border-radius:10px;
+
+padding:10px;
+
+text-align:center;
+
+font-size:14px;
+
+border:1px solid rgba(0,180,255,.3);
+
+box-shadow:0 0 10px rgba(0,180,255,.3);
+
+}
+
+/* STATUS */
+
+.disponivel{
+
+border-color:#22c55e;
+
+}
+
+.instavel{
+
+border-color:#facc15;
+
+}
+
+.indisponivel{
+
+border-color:#ef4444;
+
+}
+
+/* RESPONSIVO */
+
+@media (max-width:900px){
+
+.container{
+
+flex-direction:column;
+
+}
+
+.mapa{
+
+max-width:400px;
+
+}
+
+}
 
 </style>
 
@@ -158,7 +204,7 @@ border:2px solid white;
 
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
-<div class="status-geral">
+<div class="status">
 
 Disponibilidade Geral: <span id="percentual">0%</span>
 
@@ -166,7 +212,7 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 </header>
 
-<div class="cards" id="grid"></div>
+<div class="container">
 
 <div class="mapa-area">
 
@@ -192,16 +238,26 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 </div>
 
+<div class="cards" id="grid"></div>
+
+</div>
+
 <script>
 
 const nomes = {
 
 "Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
+
 "Valparaíso":"Câmara Municipal de Valparaíso",
+
 "São João d'Aliança":"Câmara Municipal de São João d'Aliança",
+
 "Alto Paraíso":"Câmara Municipal de Alto Paraíso",
+
 "Luziânia":"Câmara Municipal de Luziânia",
+
 "Simolândia":"Prefeitura de Simolândia",
+
 "Terezópolis":"Prefeitura de Terezópolis"
 
 }
@@ -209,11 +265,17 @@ const nomes = {
 const mapaIds = {
 
 "Cidade Ocidental":"cidadeocidental",
+
 "Valparaíso":"valparaiso",
+
 "Luziânia":"luziania",
+
 "São João d'Aliança":"saojoao",
+
 "Alto Paraíso":"altoparaiso",
+
 "Simolândia":"simolandia",
+
 "Terezópolis":"terezopolis"
 
 }
@@ -228,7 +290,7 @@ document.getElementById("percentual").innerText = dados.percentual + "%"
 
 const grid = document.getElementById("grid")
 
-grid.innerHTML = ""
+grid.innerHTML=""
 
 dados.portais.forEach(p=>{
 
@@ -238,7 +300,7 @@ if(p.status=="INSTÁVEL")classe="instavel"
 
 if(p.status=="INDISPONÍVEL")classe="indisponivel"
 
-let nomeCompleto = nomes[p.nome] || p.nome
+let nomeCompleto = nomes[p.nome]
 
 grid.innerHTML+=`
 
