@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Centro de Monitoramento - Governo Digital</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
@@ -16,6 +15,7 @@ margin:0;
 font-family:Segoe UI,Arial,sans-serif;
 background:#020617;
 color:white;
+overflow:hidden;
 }
 
 /* HEADER */
@@ -25,7 +25,6 @@ background:#050d1a;
 padding:25px;
 text-align:center;
 border-bottom:1px solid rgba(0,180,255,.3);
-box-shadow:0 0 40px rgba(0,180,255,.2);
 }
 
 header img{
@@ -35,117 +34,86 @@ filter:drop-shadow(0 0 15px #00b4ff);
 
 h1{
 color:#7dd3fc;
-margin-top:10px;
+margin:10px 0;
 }
 
 .status-geral{
-font-size:20px;
+font-size:18px;
 color:#38bdf8;
 }
 
-/* CARDS DOS PORTAIS */
+/* GRID PORTAIS */
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:25px;
-padding:35px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:25px;
 }
+
+/* CARD */
 
 .card{
 background:#0b1220;
-border-radius:16px;
-padding:25px;
+border-radius:14px;
+padding:20px;
 text-align:center;
 border:1px solid rgba(0,180,255,.25);
 box-shadow:0 0 20px rgba(0,180,255,.2);
+transition:.3s;
 }
+
+.card:hover{
+transform:scale(1.05);
+}
+
+/* STATUS */
 
 .disponivel{
 border-color:#22c55e;
+box-shadow:0 0 20px rgba(34,197,94,.5);
 }
 
 .instavel{
 border-color:#facc15;
+box-shadow:0 0 20px rgba(250,204,21,.5);
 }
 
 .indisponivel{
 border-color:#ef4444;
+box-shadow:0 0 20px rgba(239,68,68,.8);
 }
 
-/* AREA INFERIOR */
+/* MAPA */
 
-.dashboard-bottom{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:30px;
-
-padding:35px;
-
+.mapa-container{
+display:flex;
+justify-content:center;
+align-items:center;
+padding:10px;
 }
 
-.extra-card{
-
-background:#0b1220;
-
-border-radius:16px;
-
-padding:25px;
-
-border:1px solid rgba(0,180,255,.25);
-
-box-shadow:0 0 20px rgba(0,180,255,.2);
-
+.mapa{
+position:relative;
+width:650px;
 }
 
-.extra-card h2{
-
-color:#7dd3fc;
-
-margin-bottom:15px;
-
+.mapa img{
+width:100%;
 }
 
-/* RANKING */
+/* CIDADES */
 
-.ranking-item{
-
-padding:8px;
-
-border-bottom:1px solid rgba(255,255,255,.1);
-
-font-size:16px;
-
+.cidade{
+position:absolute;
+width:16px;
+height:16px;
+border-radius:50%;
 }
 
-/* FOOTER */
-
-footer{
-
-text-align:center;
-
-padding:12px;
-
-background:#050d1a;
-
-color:#94a3b8;
-
-}
-
-/* RESPONSIVO */
-
-@media(max-width:900px){
-
-.dashboard-bottom{
-
-grid-template-columns:1fr;
-
-}
-
-}
+.verde{background:#22c55e;}
+.amarelo{background:#facc15;}
+.vermelho{background:#ef4444;}
 
 </style>
 
@@ -160,154 +128,76 @@ grid-template-columns:1fr;
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
 <div class="status-geral">
-
 Disponibilidade Geral: <span id="percentual">0%</span>
-
 </div>
 
 </header>
 
 <div class="grid" id="grid"></div>
 
-<div class="dashboard-bottom">
+<div class="mapa-container">
 
-<div class="extra-card">
+<div class="mapa">
 
-<h2>Ranking de desempenho</h2>
+<img src="{{ url_for('static', filename='mapa_goias.png') }}">
 
-<div id="ranking"></div>
-
-</div>
-
-<div class="extra-card">
-
-<h2>Tempo médio de resposta</h2>
-
-<canvas id="grafico"></canvas>
+<div id="cidadeocidental" class="cidade verde" style="top:250px;left:250px;"></div>
+<div id="valparaiso" class="cidade verde" style="top:260px;left:270px;"></div>
+<div id="luziania" class="cidade verde" style="top:270px;left:300px;"></div>
+<div id="saojoao" class="cidade verde" style="top:200px;left:320px;"></div>
+<div id="altoparaiso" class="cidade verde" style="top:130px;left:240px;"></div>
+<div id="simolandia" class="cidade verde" style="top:220px;left:350px;"></div>
+<div id="terezopolis" class="cidade verde" style="top:290px;left:220px;"></div>
 
 </div>
 
 </div>
-
-<footer>
-
-Centro de Monitoramento Digital • Governo Digital
-
-</footer>
 
 <script>
 
-let historicoTempo = []
+const nomes = {
 
-let historicoHora = []
-
-const ctx = document.getElementById("grafico")
-
-const grafico = new Chart(ctx,{
-
-type:"line",
-
-data:{
-
-labels:historicoHora,
-
-datasets:[{
-
-label:"Tempo médio (ms)",
-
-data:historicoTempo,
-
-borderColor:"#00b4ff",
-
-backgroundColor:"rgba(0,180,255,.2)",
-
-tension:0.4
-
-}]
+"Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
+"Valparaíso":"Câmara Municipal de Valparaíso",
+"São João d'Aliança":"Câmara Municipal de São João d'Aliança",
+"Alto Paraíso":"Câmara Municipal de Alto Paraíso",
+"Luziânia":"Câmara Municipal de Luziânia",
+"Simolândia":"Prefeitura de Simolândia",
+"Terezópolis":"Prefeitura de Terezópolis"
 
 }
 
-})
-
 async function carregar(){
 
-const resposta = await fetch("/dados")
+const resposta=await fetch("/dados")
+const dados=await resposta.json()
 
-const dados = await resposta.json()
+document.getElementById("percentual").innerText=dados.percentual+"%"
 
-document.getElementById("percentual").innerText = dados.percentual + "%"
-
-const grid = document.getElementById("grid")
+const grid=document.getElementById("grid")
 
 grid.innerHTML=""
-
-let soma=0
 
 dados.portais.forEach(p=>{
 
 let classe="disponivel"
 
-if(p.status=="INSTÁVEL") classe="instavel"
+if(p.status=="INSTÁVEL")classe="instavel"
+if(p.status=="INDISPONÍVEL")classe="indisponivel"
 
-if(p.status=="INDISPONÍVEL") classe="indisponivel"
+let nomeCompleto = nomes[p.nome] || p.nome
 
-soma+=p.tempo
-
-grid.innerHTML += `
+grid.innerHTML+=`
 
 <div class="card ${classe}">
-
-<h2>${p.nome}</h2>
-
+<h3>${nomeCompleto}</h3>
 <div>${p.status}</div>
-
-<div>Tempo: ${p.tempo} ms</div>
-
+<div>${p.tempo} ms</div>
 </div>
 
 `
 
 })
-
-/* RANKING */
-
-const ranking = document.getElementById("ranking")
-
-const ordenado=[...dados.portais].sort((a,b)=>a.tempo-b.tempo)
-
-ranking.innerHTML=""
-
-ordenado.forEach((p,i)=>{
-
-ranking.innerHTML += `
-
-<div class="ranking-item">
-
-${i+1}º — ${p.nome} : ${p.tempo} ms
-
-</div>
-
-`
-
-})
-
-/* GRAFICO */
-
-let media=Math.round(soma/dados.portais.length)
-
-historicoTempo.push(media)
-
-historicoHora.push(new Date().toLocaleTimeString())
-
-if(historicoTempo.length>20){
-
-historicoTempo.shift()
-
-historicoHora.shift()
-
-}
-
-grafico.update()
 
 }
 
@@ -318,4 +208,5 @@ setInterval(carregar,30000)
 </script>
 
 </body>
+
 </html>
