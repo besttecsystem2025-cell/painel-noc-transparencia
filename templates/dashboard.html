@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Monitoramento Transparência</title>
+<title>Centro de Monitoramento</title>
 
 <style>
 
@@ -21,6 +21,7 @@ body{
 font-family:Segoe UI;
 background:#020617;
 color:white;
+
 overflow:hidden;
 
 }
@@ -30,21 +31,21 @@ overflow:hidden;
 header{
 
 text-align:center;
-padding:20px;
+padding:15px;
 
 }
 
 header img{
 
-height:110px;
-filter:drop-shadow(0 0 25px #00b4ff);
+height:100px;
+filter:drop-shadow(0 0 20px #00b4ff);
 
 }
 
 h1{
 
-margin-top:10px;
-font-size:32px;
+margin-top:8px;
+font-size:28px;
 color:#7dd3fc;
 
 }
@@ -61,10 +62,16 @@ margin-top:5px;
 .container{
 
 display:grid;
-grid-template-columns:1fr 1fr;
-height:calc(100vh - 150px);
+
+grid-template-columns:45% 55%;
+
+height:calc(100vh - 140px);
+
 padding:20px;
-gap:30px;
+
+gap:20px;
+
+align-items:center;
 
 }
 
@@ -73,6 +80,7 @@ gap:30px;
 .mapa{
 
 position:relative;
+
 display:flex;
 justify-content:center;
 align-items:center;
@@ -81,8 +89,8 @@ align-items:center;
 
 .mapa img{
 
-width:100%;
-max-width:520px;
+width:80%;
+max-width:420px;
 
 }
 
@@ -91,42 +99,47 @@ max-width:520px;
 .ponto{
 
 position:absolute;
-width:16px;
-height:16px;
+
+width:14px;
+height:14px;
+
 border-radius:50%;
 
 background:#22c55e;
+
 box-shadow:0 0 15px #22c55e;
 
-animation:pulse 1.2s infinite;
-
-}
-
-@keyframes pulse{
-
-0%{transform:scale(1);opacity:.6}
-50%{transform:scale(1.7);opacity:1}
-100%{transform:scale(1);opacity:.6}
+animation:pulse 1.5s infinite;
 
 }
 
 /* POSIÇÃO CIDADES */
 
-#altoparaiso{top:20%;left:48%;}
-#saojoao{top:35%;left:60%;}
-#luziania{top:50%;left:57%;}
-#cidadeocidental{top:55%;left:32%;}
-#valparaiso{top:48%;left:40%;}
-#terezopolis{top:68%;left:45%;}
-#simolandia{top:62%;left:72%;}
+#altoparaiso{top:18%;left:50%;}
+#saojoao{top:36%;left:60%;}
+#luziania{top:50%;left:58%;}
+#cidadeocidental{top:55%;left:34%;}
+#valparaiso{top:48%;left:42%;}
+#terezopolis{top:70%;left:46%;}
+#simolandia{top:63%;left:73%;}
+
+@keyframes pulse{
+
+0%{transform:scale(1);opacity:.5}
+50%{transform:scale(1.7);opacity:1}
+100%{transform:scale(1);opacity:.5}
+
+}
 
 /* CARDS */
 
 .cards{
 
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+gap:15px;
 
 }
 
@@ -135,41 +148,57 @@ gap:20px;
 .card{
 
 background:#0b1220;
-border-radius:14px;
-padding:20px;
+
+border-radius:12px;
+
+padding:15px;
+
 text-align:center;
 
-border:1px solid rgba(0,180,255,.3);
+border:1px solid rgba(0,180,255,.4);
 
-box-shadow:0 0 15px rgba(0,180,255,.4);
+box-shadow:0 0 10px rgba(0,180,255,.4);
 
-transition:.4s;
+animation:cardGlow 3s infinite alternate;
 
-animation:cardPulse 4s infinite alternate;
+transition:.3s;
 
 }
 
 .card:hover{
 
-transform:scale(1.06);
+transform:scale(1.08);
+
 box-shadow:0 0 35px #00b4ff;
 
 }
 
-@keyframes cardPulse{
+@keyframes cardGlow{
 
-from{box-shadow:0 0 10px rgba(0,180,255,.3)}
-to{box-shadow:0 0 30px rgba(0,180,255,.7)}
+from{
+
+box-shadow:0 0 10px rgba(0,180,255,.3)
+
+}
+
+to{
+
+box-shadow:0 0 25px rgba(0,180,255,.8)
+
+}
 
 }
 
 /* RESPONSIVO */
 
-@media(max-width:1100px){
+@media(max-width:1000px){
 
 .container{
 
 grid-template-columns:1fr;
+
+height:auto;
+
 overflow:auto;
 
 }
@@ -177,6 +206,12 @@ overflow:auto;
 body{
 
 overflow:auto;
+
+}
+
+.mapa img{
+
+width:60%;
 
 }
 
