@@ -21,7 +21,7 @@ body{
 font-family:Segoe UI;
 background:#020617;
 color:white;
-overflow-x:hidden;
+overflow:hidden;
 
 }
 
@@ -36,15 +36,15 @@ padding:20px;
 
 header img{
 
-height:100px;
-filter:drop-shadow(0 0 20px #00b4ff);
+height:110px;
+filter:drop-shadow(0 0 25px #00b4ff);
 
 }
 
 h1{
 
 margin-top:10px;
-font-size:30px;
+font-size:32px;
 color:#7dd3fc;
 
 }
@@ -62,9 +62,9 @@ margin-top:5px;
 
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:40px;
-
+height:calc(100vh - 150px);
 padding:20px;
+gap:30px;
 
 }
 
@@ -75,6 +75,7 @@ padding:20px;
 position:relative;
 display:flex;
 justify-content:center;
+align-items:center;
 
 }
 
@@ -85,94 +86,46 @@ max-width:520px;
 
 }
 
-/* PONTOS */
+/* BOLINHAS */
 
 .ponto{
 
 position:absolute;
-
-width:14px;
-height:14px;
-
+width:16px;
+height:16px;
 border-radius:50%;
 
 background:#22c55e;
-
 box-shadow:0 0 15px #22c55e;
 
-animation:pulse 1.5s infinite;
+animation:pulse 1.2s infinite;
 
 }
-
-/* POSIÇÃO DAS CIDADES */
-
-#altoparaiso{
-
-top:16%;
-left:47%;
-
-}
-
-#saojoao{
-
-top:31%;
-left:60%;
-
-}
-
-#luziania{
-
-top:47%;
-left:57%;
-
-}
-
-#cidadeocidental{
-
-top:52%;
-left:33%;
-
-}
-
-#valparaiso{
-
-top:46%;
-left:41%;
-
-}
-
-#terezopolis{
-
-top:64%;
-left:46%;
-
-}
-
-#simolandia{
-
-top:59%;
-left:71%;
-
-}
-
-/* ANIMAÇÃO */
 
 @keyframes pulse{
 
 0%{transform:scale(1);opacity:.6}
-50%{transform:scale(1.6);opacity:1}
+50%{transform:scale(1.7);opacity:1}
 100%{transform:scale(1);opacity:.6}
 
 }
+
+/* POSIÇÃO CIDADES */
+
+#altoparaiso{top:20%;left:48%;}
+#saojoao{top:35%;left:60%;}
+#luziania{top:50%;left:57%;}
+#cidadeocidental{top:55%;left:32%;}
+#valparaiso{top:48%;left:40%;}
+#terezopolis{top:68%;left:45%;}
+#simolandia{top:62%;left:72%;}
 
 /* CARDS */
 
 .cards{
 
 display:grid;
-
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
 gap:20px;
 
 }
@@ -182,43 +135,48 @@ gap:20px;
 .card{
 
 background:#0b1220;
-
-border-radius:12px;
-
-padding:18px;
-
+border-radius:14px;
+padding:20px;
 text-align:center;
 
 border:1px solid rgba(0,180,255,.3);
 
 box-shadow:0 0 15px rgba(0,180,255,.4);
 
-transition:0.3s;
+transition:.4s;
 
-animation:glow 4s infinite alternate;
+animation:cardPulse 4s infinite alternate;
 
 }
 
 .card:hover{
 
-transform:scale(1.05);
+transform:scale(1.06);
+box-shadow:0 0 35px #00b4ff;
 
 }
 
-@keyframes glow{
+@keyframes cardPulse{
 
 from{box-shadow:0 0 10px rgba(0,180,255,.3)}
-to{box-shadow:0 0 25px rgba(0,180,255,.7)}
+to{box-shadow:0 0 30px rgba(0,180,255,.7)}
 
 }
 
 /* RESPONSIVO */
 
-@media (max-width:1100px){
+@media(max-width:1100px){
 
 .container{
 
 grid-template-columns:1fr;
+overflow:auto;
+
+}
+
+body{
+
+overflow:auto;
 
 }
 
@@ -246,8 +204,6 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <div class="container">
 
-<!-- MAPA -->
-
 <div class="mapa">
 
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
@@ -261,8 +217,6 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 <div id="simolandia" class="ponto"></div>
 
 </div>
-
-<!-- CARDS -->
 
 <div class="cards" id="grid"></div>
 
@@ -327,4 +281,5 @@ setInterval(carregar,30000)
 </script>
 
 </body>
+
 </html>
