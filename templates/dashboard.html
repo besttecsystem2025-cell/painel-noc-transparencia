@@ -61,14 +61,12 @@ font-size:16px;
 .container{
 
 display:grid;
-
 grid-template-columns:1fr 1fr;
-
 gap:20px;
 
-padding:10px;
+height:calc(100vh - 120px);
 
-height:calc(100vh - 130px);
+padding:10px;
 
 }
 
@@ -79,69 +77,129 @@ height:calc(100vh - 130px);
 position:relative;
 
 display:flex;
-align-items:flex-start;
 justify-content:center;
-
-padding-top:10px;
+align-items:flex-start;
 
 }
 
 .mapa img{
 
-width:85%;
+width:80%;
 max-width:420px;
 
 }
 
-/* MARCAÇÃO DAS CIDADES */
+/* MASCARA DAS CIDADES */
 
 .cidade{
 
 position:absolute;
 
-width:45px;
-height:45px;
-
-border-radius:50%;
-
-background:rgba(34,197,94,.25);
-
-border:2px solid rgba(34,197,94,.8);
+width:70px;
+height:70px;
 
 animation:pulse 2s infinite;
 
+opacity:.45;
+
 }
 
-/* POSIÇÃO DAS CIDADES */
+/* FORMATO DAS CIDADES */
 
-#cidadeocidental{top:58%;left:33%;}
-#valparaiso{top:55%;left:39%;}
-#luziania{top:48%;left:55%;}
-#saojoao{top:36%;left:60%;}
-#altoparaiso{top:24%;left:46%;}
-#simolandia{top:58%;left:69%;}
-#terezopolis{top:70%;left:50%;}
+#cidadeocidental{
+
+top:58%;
+left:34%;
+
+clip-path:polygon(
+20% 10%,80% 10%,90% 40%,70% 80%,30% 80%,10% 40%
+);
+
+}
+
+#valparaiso{
+
+top:55%;
+left:40%;
+
+clip-path:polygon(
+25% 15%,75% 15%,85% 45%,65% 80%,35% 80%,15% 45%
+);
+
+}
+
+#luziania{
+
+top:48%;
+left:55%;
+
+clip-path:polygon(
+20% 20%,80% 10%,90% 50%,70% 85%,30% 85%,10% 50%
+);
+
+}
+
+#saojoao{
+
+top:35%;
+left:60%;
+
+clip-path:polygon(
+30% 10%,70% 10%,90% 40%,60% 90%,20% 80%,10% 40%
+);
+
+}
+
+#altoparaiso{
+
+top:22%;
+left:45%;
+
+clip-path:polygon(
+30% 20%,70% 10%,90% 40%,70% 80%,30% 80%,10% 40%
+);
+
+}
+
+#simolandia{
+
+top:58%;
+left:68%;
+
+clip-path:polygon(
+20% 20%,80% 20%,90% 50%,70% 80%,30% 80%,10% 50%
+);
+
+}
+
+#terezopolis{
+
+top:70%;
+left:50%;
+
+clip-path:polygon(
+30% 20%,70% 20%,90% 50%,60% 85%,40% 85%,10% 50%
+);
+
+}
 
 /* STATUS */
 
 .disponivel{
 
-background:rgba(34,197,94,.25);
-border:2px solid #22c55e;
+background:#22c55e;
 
 }
 
 .instavel{
 
-background:rgba(250,204,21,.25);
-border:2px solid #facc15;
+background:#facc15;
 
 }
 
 .indisponivel{
 
-background:rgba(239,68,68,.25);
-border:2px solid #ef4444;
+background:#ef4444;
 
 }
 
@@ -149,9 +207,9 @@ border:2px solid #ef4444;
 
 @keyframes pulse{
 
-0%{transform:scale(1);opacity:.7}
-50%{transform:scale(1.3);opacity:1}
-100%{transform:scale(1);opacity:.7}
+0%{transform:scale(1)}
+50%{transform:scale(1.2)}
+100%{transform:scale(1)}
 
 }
 
@@ -185,23 +243,14 @@ border:1px solid rgba(0,180,255,.3);
 
 box-shadow:0 0 20px rgba(0,180,255,.2);
 
-transition:.4s;
-
-animation:cardGlow 3s infinite alternate;
+animation:glow 4s infinite alternate;
 
 }
 
-/* ANIMAÇÃO DOS CARDS */
+@keyframes glow{
 
-@keyframes cardGlow{
-
-from{
-box-shadow:0 0 10px rgba(0,180,255,.2);
-}
-
-to{
-box-shadow:0 0 25px rgba(0,180,255,.5);
-}
+from{box-shadow:0 0 10px rgba(0,180,255,.2)}
+to{box-shadow:0 0 25px rgba(0,180,255,.6)}
 
 }
 
@@ -218,7 +267,6 @@ transform:scale(1.05);
 .container{
 
 grid-template-columns:1fr;
-
 overflow:auto;
 
 }
@@ -226,34 +274,6 @@ overflow:auto;
 body{
 
 overflow:auto;
-
-}
-
-.mapa img{
-
-width:70%;
-
-}
-
-}
-
-@media (max-width:600px){
-
-header img{
-
-height:70px;
-
-}
-
-h1{
-
-font-size:20px;
-
-}
-
-.cards{
-
-grid-template-columns:1fr;
 
 }
 
@@ -363,8 +383,6 @@ ${p.tempo} ms
 </div>
 
 `
-
-/* ATUALIZA MAPA */
 
 let id = idsMapa[p.nome]
 
