@@ -36,7 +36,7 @@ padding:10px;
 
 header img{
 
-height:100px;
+height:90px;
 filter:drop-shadow(0 0 20px #00b4ff);
 
 }
@@ -65,7 +65,6 @@ grid-template-columns:1fr 1fr;
 gap:20px;
 
 height:calc(100vh - 120px);
-
 padding:10px;
 
 }
@@ -89,117 +88,42 @@ max-width:420px;
 
 }
 
-/* MASCARA DAS CIDADES */
+/* SVG overlay */
+
+.overlay{
+
+position:absolute;
+width:80%;
+max-width:420px;
+pointer-events:none;
+
+}
+
+/* CIDADES */
 
 .cidade{
 
-position:absolute;
-
-width:70px;
-height:70px;
+fill:rgba(34,197,94,0.35);
+stroke:#22c55e;
+stroke-width:2;
 
 animation:pulse 2s infinite;
-
-opacity:.45;
-
-}
-
-/* FORMATO DAS CIDADES */
-
-#cidadeocidental{
-
-top:58%;
-left:34%;
-
-clip-path:polygon(
-20% 10%,80% 10%,90% 40%,70% 80%,30% 80%,10% 40%
-);
-
-}
-
-#valparaiso{
-
-top:55%;
-left:40%;
-
-clip-path:polygon(
-25% 15%,75% 15%,85% 45%,65% 80%,35% 80%,15% 45%
-);
-
-}
-
-#luziania{
-
-top:48%;
-left:55%;
-
-clip-path:polygon(
-20% 20%,80% 10%,90% 50%,70% 85%,30% 85%,10% 50%
-);
-
-}
-
-#saojoao{
-
-top:35%;
-left:60%;
-
-clip-path:polygon(
-30% 10%,70% 10%,90% 40%,60% 90%,20% 80%,10% 40%
-);
-
-}
-
-#altoparaiso{
-
-top:22%;
-left:45%;
-
-clip-path:polygon(
-30% 20%,70% 10%,90% 40%,70% 80%,30% 80%,10% 40%
-);
-
-}
-
-#simolandia{
-
-top:58%;
-left:68%;
-
-clip-path:polygon(
-20% 20%,80% 20%,90% 50%,70% 80%,30% 80%,10% 50%
-);
-
-}
-
-#terezopolis{
-
-top:70%;
-left:50%;
-
-clip-path:polygon(
-30% 20%,70% 20%,90% 50%,60% 85%,40% 85%,10% 50%
-);
 
 }
 
 /* STATUS */
 
-.disponivel{
-
-background:#22c55e;
-
-}
-
 .instavel{
 
-background:#facc15;
+fill:rgba(250,204,21,.35);
+stroke:#facc15;
 
 }
 
 .indisponivel{
 
-background:#ef4444;
+fill:rgba(239,68,68,.35);
+stroke:#ef4444;
 
 }
 
@@ -207,9 +131,9 @@ background:#ef4444;
 
 @keyframes pulse{
 
-0%{transform:scale(1)}
-50%{transform:scale(1.2)}
-100%{transform:scale(1)}
+0%{opacity:.5}
+50%{opacity:1}
+100%{opacity:.5}
 
 }
 
@@ -251,12 +175,6 @@ animation:glow 4s infinite alternate;
 
 from{box-shadow:0 0 10px rgba(0,180,255,.2)}
 to{box-shadow:0 0 25px rgba(0,180,255,.6)}
-
-}
-
-.card:hover{
-
-transform:scale(1.05);
 
 }
 
@@ -305,13 +223,44 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
 
-<div id="cidadeocidental" class="cidade"></div>
-<div id="valparaiso" class="cidade"></div>
-<div id="luziania" class="cidade"></div>
-<div id="saojoao" class="cidade"></div>
-<div id="altoparaiso" class="cidade"></div>
-<div id="simolandia" class="cidade"></div>
-<div id="terezopolis" class="cidade"></div>
+<svg class="overlay" viewBox="0 0 400 400">
+
+<!-- ALTO PARAISO -->
+<polygon id="altoparaiso"
+points="150,40 190,35 210,60 170,70"
+class="cidade"/>
+
+<!-- SAO JOAO -->
+<polygon id="saojoao"
+points="240,120 280,110 300,140 260,160"
+class="cidade"/>
+
+<!-- LUZIANIA -->
+<polygon id="luziania"
+points="230,200 270,190 290,220 250,240"
+class="cidade"/>
+
+<!-- CIDADE OCIDENTAL -->
+<polygon id="cidadeocidental"
+points="130,230 170,220 190,250 150,270"
+class="cidade"/>
+
+<!-- VALPARAISO -->
+<polygon id="valparaiso"
+points="180,200 210,190 220,210 190,220"
+class="cidade"/>
+
+<!-- TEREZOPOLIS -->
+<polygon id="terezopolis"
+points="200,260 240,250 260,280 220,300"
+class="cidade"/>
+
+<!-- SIMOLANDIA -->
+<polygon id="simolandia"
+points="300,240 340,230 360,260 320,280"
+class="cidade"/>
+
+</svg>
 
 </div>
 
@@ -359,10 +308,10 @@ grid.innerHTML=""
 
 dados.portais.forEach(p=>{
 
-let classe="disponivel"
+let classe="cidade"
 
-if(p.status=="INSTÁVEL")classe="instavel"
-if(p.status=="INDISPONÍVEL")classe="indisponivel"
+if(p.status=="INSTÁVEL")classe="cidade instavel"
+if(p.status=="INDISPONÍVEL")classe="cidade indisponivel"
 
 let nomeCompleto = nomes[p.nome]
 
@@ -388,9 +337,7 @@ let id = idsMapa[p.nome]
 
 let cidade = document.getElementById(id)
 
-cidade.classList.remove("disponivel","instavel","indisponivel")
-
-cidade.classList.add(classe)
+cidade.setAttribute("class",classe)
 
 })
 
