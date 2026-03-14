@@ -37,8 +37,8 @@ padding:20px;
 
 header img{
 
-height:95px;
-filter:drop-shadow(0 0 18px #00b4ff);
+height:90px;
+filter:drop-shadow(0 0 20px #00b4ff);
 
 }
 
@@ -46,14 +46,14 @@ h1{
 
 margin-top:10px;
 color:#7dd3fc;
-font-size:30px;
+font-size:28px;
 
 }
 
 .status{
 
 color:#38bdf8;
-margin-top:5px;
+margin-top:6px;
 
 }
 
@@ -63,13 +63,13 @@ margin-top:5px;
 
 display:grid;
 
-grid-template-columns:40% 60%;
+grid-template-columns:45% 55%;
 
 height:calc(100vh - 140px);
 
 padding:20px;
 
-gap:25px;
+gap:10px;
 
 align-items:center;
 
@@ -96,42 +96,72 @@ object-fit:contain;
 
 }
 
-/* BOLINHAS */
+/* RADAR */
 
-.ponto{
+.radar{
 
 position:absolute;
 
-width:14px;
-height:14px;
+width:70px;
+height:70px;
 
 border-radius:50%;
 
+border:2px solid #22c55e;
+
+animation:radar 2.5s linear infinite;
+
+}
+
+.radar::after{
+
+content:"";
+
+position:absolute;
+
+width:8px;
+height:8px;
+
 background:#22c55e;
 
-box-shadow:0 0 14px #22c55e;
+border-radius:50%;
 
-animation:pulse 1.5s infinite;
+top:50%;
+left:50%;
 
-}
+transform:translate(-50%,-50%);
 
-@keyframes pulse{
-
-0%{transform:scale(1);opacity:.6}
-50%{transform:scale(1.8);opacity:1}
-100%{transform:scale(1);opacity:.6}
+box-shadow:0 0 12px #22c55e;
 
 }
 
-/* POSIÇÃO DAS CIDADES */
+@keyframes radar{
 
-#altoparaiso{top:70px;left:200px;}
-#saojoao{top:150px;left:260px;}
-#luziania{top:210px;left:250px;}
-#cidadeocidental{top:240px;left:120px;}
-#valparaiso{top:210px;left:170px;}
-#terezopolis{top:300px;left:190px;}
-#simolandia{top:260px;left:320px;}
+0%{
+
+transform:scale(0.3);
+opacity:1;
+
+}
+
+100%{
+
+transform:scale(1.8);
+opacity:0;
+
+}
+
+}
+
+/* POSIÇÕES */
+
+#altoparaiso{top:40px;left:190px;}
+#saojoao{top:130px;left:250px;}
+#luziania{top:200px;left:240px;}
+#cidadeocidental{top:220px;left:110px;}
+#valparaiso{top:200px;left:160px;}
+#terezopolis{top:290px;left:180px;}
+#simolandia{top:250px;left:300px;}
 
 /* CARDS */
 
@@ -139,7 +169,7 @@ animation:pulse 1.5s infinite;
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 
 gap:15px;
 
@@ -159,22 +189,33 @@ text-align:center;
 
 border:1px solid rgba(0,180,255,.4);
 
-box-shadow:0 0 12px rgba(0,180,255,.5);
+box-shadow:0 0 10px rgba(0,180,255,.5);
 
 animation:glow 3s infinite alternate;
+
+transition:.3s;
 
 }
 
 .card:hover{
 
-transform:scale(1.06);
+transform:scale(1.07);
 
 }
 
 @keyframes glow{
 
-from{box-shadow:0 0 10px rgba(0,180,255,.3)}
-to{box-shadow:0 0 25px rgba(0,180,255,.8)}
+from{
+
+box-shadow:0 0 10px rgba(0,180,255,.3);
+
+}
+
+to{
+
+box-shadow:0 0 30px rgba(0,180,255,.8);
+
+}
 
 }
 
@@ -226,13 +267,13 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
 
-<div id="altoparaiso" class="ponto"></div>
-<div id="saojoao" class="ponto"></div>
-<div id="luziania" class="ponto"></div>
-<div id="cidadeocidental" class="ponto"></div>
-<div id="valparaiso" class="ponto"></div>
-<div id="terezopolis" class="ponto"></div>
-<div id="simolandia" class="ponto"></div>
+<div id="altoparaiso" class="radar"></div>
+<div id="saojoao" class="radar"></div>
+<div id="luziania" class="radar"></div>
+<div id="cidadeocidental" class="radar"></div>
+<div id="valparaiso" class="radar"></div>
+<div id="terezopolis" class="radar"></div>
+<div id="simolandia" class="radar"></div>
 
 </div>
 
