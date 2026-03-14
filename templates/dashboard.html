@@ -6,19 +6,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Centro de Monitoramento</title>
+<title>Monitoramento Transparência</title>
 
 <style>
 
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 }
 
 body{
 
-font-family:Segoe UI;
+font-family:Arial, Helvetica, sans-serif;
 background:#020617;
 color:white;
 
@@ -31,22 +31,22 @@ overflow:hidden;
 header{
 
 text-align:center;
-padding:15px;
+padding:20px;
 
 }
 
 header img{
 
-height:100px;
-filter:drop-shadow(0 0 20px #00b4ff);
+height:95px;
+filter:drop-shadow(0 0 18px #00b4ff);
 
 }
 
 h1{
 
-margin-top:8px;
-font-size:28px;
+margin-top:10px;
 color:#7dd3fc;
+font-size:30px;
 
 }
 
@@ -63,13 +63,13 @@ margin-top:5px;
 
 display:grid;
 
-grid-template-columns:45% 55%;
+grid-template-columns:40% 60%;
 
 height:calc(100vh - 140px);
 
 padding:20px;
 
-gap:20px;
+gap:25px;
 
 align-items:center;
 
@@ -81,16 +81,18 @@ align-items:center;
 
 position:relative;
 
-display:flex;
-justify-content:center;
-align-items:center;
+width:420px;
+height:420px;
+
+margin:auto;
 
 }
 
 .mapa img{
 
-width:80%;
-max-width:420px;
+width:100%;
+height:100%;
+object-fit:contain;
 
 }
 
@@ -107,29 +109,29 @@ border-radius:50%;
 
 background:#22c55e;
 
-box-shadow:0 0 15px #22c55e;
+box-shadow:0 0 14px #22c55e;
 
 animation:pulse 1.5s infinite;
 
 }
 
-/* POSIÇÃO CIDADES */
-
-#altoparaiso{top:18%;left:50%;}
-#saojoao{top:36%;left:60%;}
-#luziania{top:50%;left:58%;}
-#cidadeocidental{top:55%;left:34%;}
-#valparaiso{top:48%;left:42%;}
-#terezopolis{top:70%;left:46%;}
-#simolandia{top:63%;left:73%;}
-
 @keyframes pulse{
 
-0%{transform:scale(1);opacity:.5}
-50%{transform:scale(1.7);opacity:1}
-100%{transform:scale(1);opacity:.5}
+0%{transform:scale(1);opacity:.6}
+50%{transform:scale(1.8);opacity:1}
+100%{transform:scale(1);opacity:.6}
 
 }
+
+/* POSIÇÃO DAS CIDADES */
+
+#altoparaiso{top:70px;left:200px;}
+#saojoao{top:150px;left:260px;}
+#luziania{top:210px;left:250px;}
+#cidadeocidental{top:240px;left:120px;}
+#valparaiso{top:210px;left:170px;}
+#terezopolis{top:300px;left:190px;}
+#simolandia{top:260px;left:320px;}
 
 /* CARDS */
 
@@ -157,35 +159,22 @@ text-align:center;
 
 border:1px solid rgba(0,180,255,.4);
 
-box-shadow:0 0 10px rgba(0,180,255,.4);
+box-shadow:0 0 12px rgba(0,180,255,.5);
 
-animation:cardGlow 3s infinite alternate;
-
-transition:.3s;
+animation:glow 3s infinite alternate;
 
 }
 
 .card:hover{
 
-transform:scale(1.08);
-
-box-shadow:0 0 35px #00b4ff;
+transform:scale(1.06);
 
 }
 
-@keyframes cardGlow{
+@keyframes glow{
 
-from{
-
-box-shadow:0 0 10px rgba(0,180,255,.3)
-
-}
-
-to{
-
-box-shadow:0 0 25px rgba(0,180,255,.8)
-
-}
+from{box-shadow:0 0 10px rgba(0,180,255,.3)}
+to{box-shadow:0 0 25px rgba(0,180,255,.8)}
 
 }
 
@@ -206,12 +195,6 @@ overflow:auto;
 body{
 
 overflow:auto;
-
-}
-
-.mapa img{
-
-width:60%;
 
 }
 
@@ -285,13 +268,11 @@ grid.innerHTML=""
 
 dados.portais.forEach(p=>{
 
-let nomeCompleto = nomes[p.nome]
-
 grid.innerHTML+=`
 
 <div class="card">
 
-<strong>${nomeCompleto}</strong>
+<strong>${nomes[p.nome]}</strong>
 
 <br><br>
 
