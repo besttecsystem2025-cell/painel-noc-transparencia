@@ -15,37 +15,31 @@ margin:0;
 font-family:Segoe UI;
 background:#020617;
 color:white;
+height:100vh;
+overflow:hidden;
 }
 
 /* HEADER */
 
 header{
-
 text-align:center;
-padding:30px 10px;
-
+padding:20px 10px;
 }
 
 header img{
-
-height:110px;
+height:120px;
 filter:drop-shadow(0 0 20px #00b4ff);
-
 }
 
 h1{
-
 color:#7dd3fc;
 margin:10px 0;
 font-size:32px;
-
 }
 
 .status{
-
 color:#38bdf8;
 font-size:18px;
-
 }
 
 /* LAYOUT */
@@ -53,8 +47,7 @@ font-size:18px;
 .container{
 
 display:flex;
-flex-wrap:wrap;
-padding:20px;
+height:70vh;
 
 }
 
@@ -63,7 +56,6 @@ padding:20px;
 .mapa-area{
 
 flex:1;
-min-width:320px;
 
 display:flex;
 align-items:center;
@@ -74,15 +66,13 @@ justify-content:center;
 .mapa{
 
 position:relative;
-width:100%;
-max-width:550px;
+width:90%;
+max-width:520px;
 
 }
 
 .mapa img{
-
 width:100%;
-
 }
 
 /* PONTOS */
@@ -92,6 +82,7 @@ width:100%;
 position:absolute;
 width:14px;
 height:14px;
+
 border-radius:50%;
 border:2px solid white;
 
@@ -111,17 +102,31 @@ animation:pulse 2s infinite;
 
 }
 
+/* POSIÇÕES DAS CIDADES (RESPONSIVAS) */
+
+#cidadeocidental{top:60%;left:35%;}
+#valparaiso{top:58%;left:40%;}
+#luziania{top:50%;left:55%;}
+#saojoao{top:35%;left:60%;}
+#altoparaiso{top:25%;left:45%;}
+#simolandia{top:58%;left:70%;}
+#terezopolis{top:70%;left:50%;}
+
 /* CARDS */
 
 .cards{
 
 flex:1;
-min-width:320px;
 
 display:grid;
+
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 
 gap:15px;
+
+align-content:center;
+
+padding:10px;
 
 }
 
@@ -166,21 +171,20 @@ border-color:#ef4444;
 @media (max-width:900px){
 
 .container{
-
 flex-direction:column;
+height:auto;
+}
 
+body{
+overflow:auto;
 }
 
 header img{
-
 height:90px;
-
 }
 
 h1{
-
 font-size:26px;
-
 }
 
 }
@@ -213,13 +217,13 @@ Disponibilidade Geral: <span id="percentual">0%</span>
 
 <img src="{{ url_for('static', filename='mapa_goias.png') }}">
 
-<div id="cidadeocidental" class="ponto verde" style="top:250px;left:200px;"></div>
-<div id="valparaiso" class="ponto verde" style="top:260px;left:240px;"></div>
-<div id="luziania" class="ponto verde" style="top:280px;left:280px;"></div>
-<div id="saojoao" class="ponto verde" style="top:200px;left:300px;"></div>
-<div id="altoparaiso" class="ponto verde" style="top:120px;left:250px;"></div>
-<div id="simolandia" class="ponto verde" style="top:260px;left:340px;"></div>
-<div id="terezopolis" class="ponto verde" style="top:300px;left:220px;"></div>
+<div id="cidadeocidental" class="ponto verde"></div>
+<div id="valparaiso" class="ponto verde"></div>
+<div id="luziania" class="ponto verde"></div>
+<div id="saojoao" class="ponto verde"></div>
+<div id="altoparaiso" class="ponto verde"></div>
+<div id="simolandia" class="ponto verde"></div>
+<div id="terezopolis" class="ponto verde"></div>
 
 </div>
 
