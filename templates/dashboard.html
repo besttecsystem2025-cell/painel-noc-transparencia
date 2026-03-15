@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Monitoramento dos Portais</title>
 
 <style>
@@ -13,7 +16,9 @@ padding:0;
 box-sizing:border-box;
 }
 
-body{
+html,body{
+height:100%;
+overflow:hidden;
 font-family:Arial, Helvetica, sans-serif;
 background:#020617;
 color:white;
@@ -23,122 +28,169 @@ color:white;
 
 header{
 text-align:center;
-padding:20px;
+padding:20px 0;
 }
 
 header img{
-height:90px;
+height:80px;
 filter:drop-shadow(0 0 15px #00b4ff);
 }
 
 h1{
 margin-top:10px;
-font-size:32px;
+font-size:30px;
 color:#7dd3fc;
 }
 
 .status{
-color:#38bdf8;
 margin-top:6px;
+color:#38bdf8;
 }
 
 /* LAYOUT PRINCIPAL */
 
 .main{
+
 display:flex;
-flex-wrap:wrap;
 justify-content:center;
 align-items:center;
 gap:40px;
-padding:30px;
+height:calc(100vh - 180px);
+
 }
 
 /* MAPA */
 
 .mapa-container{
+
 position:relative;
-max-width:520px;
-width:100%;
+width:420px;
+
 }
 
 .mapa-container img{
+
 width:100%;
 height:auto;
+
 }
 
 /* RADAR */
 
 .radar{
+
 position:absolute;
-width:8px;
-height:8px;
+width:14px;
+height:14px;
 background:#22c55e;
 border-radius:50%;
 transform:translate(-50%,-50%);
-animation:pulse 2s infinite;
+
 }
 
-@keyframes pulse{
-0%{box-shadow:0 0 0 0 rgba(34,197,94,0.9);}
-70%{box-shadow:0 0 0 18px rgba(34,197,94,0);}
-100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}
+.radar::after{
+
+content:'';
+position:absolute;
+width:40px;
+height:40px;
+border-radius:50%;
+border:2px solid #22c55e;
+top:-13px;
+left:-13px;
+animation:radar 2s linear infinite;
+
 }
 
-/* POSIÇÃO DAS CIDADES (PORCENTAGEM) */
+@keyframes radar{
 
-#altoparaiso{top:25%;left:52%;}
-#saojoao{top:40%;left:60%;}
+0%{
+transform:scale(0.5);
+opacity:1;
+}
+
+100%{
+transform:scale(1.6);
+opacity:0;
+}
+
+}
+
+/* POSIÇÃO DAS CIDADES */
+
+#altoparaiso{top:27%;left:53%;}
+#saojoao{top:41%;left:60%;}
 #luziania{top:55%;left:50%;}
 #cidadeocidental{top:60%;left:30%;}
 #valparaiso{top:52%;left:40%;}
-#terezopolis{top:70%;left:46%;}
-#simolandia{top:65%;left:72%;}
+#terezopolis{top:72%;left:46%;}
+#simolandia{top:66%;left:73%;}
 
 /* CARDS */
 
 .cards{
+
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-max-width:900px;
-width:100%;
+grid-template-columns:repeat(3,220px);
+gap:18px;
+
 }
 
 .card{
+
 background:#0b1220;
-border-radius:12px;
-padding:18px;
+border-radius:10px;
+padding:16px;
 text-align:center;
 border:1px solid rgba(0,180,255,.4);
 box-shadow:0 0 12px rgba(0,180,255,.5);
 transition:.3s;
+
 }
 
 .card:hover{
+
 transform:scale(1.05);
 box-shadow:0 0 25px #00b4ff;
+
 }
 
 .card strong{
-font-size:15px;
+
+font-size:14px;
+
 }
 
 /* RESPONSIVO */
 
-@media(max-width:900px){
+@media(max-width:1200px){
 
 .main{
 flex-direction:column;
 }
 
 .cards{
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(2,220px);
+}
+
+}
+
+@media(max-width:700px){
+
+.cards{
+grid-template-columns:1fr;
+}
+
+.mapa-container{
+width:300px;
 }
 
 }
 
 </style>
+
 </head>
+
 
 <body>
 
@@ -149,12 +201,17 @@ grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
 <div class="status">
+
 Disponibilidade Geral: <span id="percentual">100%</span>
+
 </div>
 
 </header>
 
+
 <div class="main">
+
+<!-- MAPA -->
 
 <div class="mapa-container">
 
@@ -170,11 +227,29 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 
 </div>
 
+
+<!-- CARDS -->
+
 <div class="cards" id="grid"></div>
 
 </div>
 
+
 <script>
+
+/* FULLSCREEN AUTOMÁTICO */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+if (document.documentElement.requestFullscreen) {
+
+document.documentElement.requestFullscreen()
+
+}
+
+})
+
+/* NOMES */
 
 const nomes = {
 
@@ -188,14 +263,18 @@ const nomes = {
 
 }
 
+/* CARREGAR DADOS */
+
 async function carregar(){
 
 const resposta = await fetch("/dados")
+
 const dados = await resposta.json()
 
 document.getElementById("percentual").innerText = dados.percentual + "%"
 
 const grid = document.getElementById("grid")
+
 grid.innerHTML=""
 
 dados.portais.forEach(p=>{
@@ -223,9 +302,12 @@ ${p.tempo} ms
 }
 
 carregar()
+
 setInterval(carregar,30000)
 
 </script>
 
+
 </body>
+
 </html>
