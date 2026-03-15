@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Monitoramento dos Portais</title>
+<title>Monitoramento</title>
 
 <style>
 
@@ -19,7 +19,7 @@ box-sizing:border-box;
 html,body{
 height:100%;
 overflow:hidden;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial;
 background:#020617;
 color:white;
 }
@@ -28,84 +28,74 @@ color:white;
 
 header{
 text-align:center;
-padding:20px 0;
+padding-top:15px;
 }
 
 header img{
-height:80px;
-filter:drop-shadow(0 0 15px #00b4ff);
+height:70px;
+filter:drop-shadow(0 0 12px #00b4ff);
 }
 
 h1{
-margin-top:10px;
-font-size:30px;
+margin-top:8px;
+font-size:28px;
 color:#7dd3fc;
 }
 
 .status{
-margin-top:6px;
 color:#38bdf8;
+margin-top:6px;
 }
 
-/* LAYOUT PRINCIPAL */
+/* LAYOUT */
 
 .main{
-
 display:flex;
 justify-content:center;
 align-items:center;
 gap:40px;
-height:calc(100vh - 180px);
-
+height:calc(100vh - 150px);
 }
 
 /* MAPA */
 
 .mapa-container{
-
 position:relative;
 width:420px;
-
+overflow:hidden;
 }
 
 .mapa-container img{
-
 width:100%;
-height:auto;
-
 }
 
 /* RADAR */
 
 .radar{
-
 position:absolute;
-width:14px;
-height:14px;
+width:10px;
+height:10px;
 background:#22c55e;
 border-radius:50%;
 transform:translate(-50%,-50%);
-
 }
 
 .radar::after{
-
 content:'';
 position:absolute;
-width:40px;
-height:40px;
+width:22px;
+height:22px;
 border-radius:50%;
 border:2px solid #22c55e;
-top:-13px;
-left:-13px;
-animation:radar 2s linear infinite;
-
+top:-6px;
+left:-6px;
+animation:radar 2s infinite;
 }
 
 @keyframes radar{
 
 0%{
-transform:scale(0.5);
+transform:scale(.5);
 opacity:1;
 }
 
@@ -118,47 +108,37 @@ opacity:0;
 
 /* POSIÇÃO DAS CIDADES */
 
-#altoparaiso{top:27%;left:53%;}
+#altoparaiso{top:27%;left:52%;}
 #saojoao{top:41%;left:60%;}
 #luziania{top:55%;left:50%;}
 #cidadeocidental{top:60%;left:30%;}
 #valparaiso{top:52%;left:40%;}
 #terezopolis{top:72%;left:46%;}
-#simolandia{top:66%;left:73%;}
+#simolandia{top:66%;left:72%;}
 
 /* CARDS */
 
 .cards{
-
 display:grid;
-grid-template-columns:repeat(3,220px);
-gap:18px;
-
+grid-template-columns:repeat(3,200px);
+gap:16px;
 }
 
 .card{
-
 background:#0b1220;
 border-radius:10px;
-padding:16px;
+padding:14px;
 text-align:center;
 border:1px solid rgba(0,180,255,.4);
-box-shadow:0 0 12px rgba(0,180,255,.5);
-transition:.3s;
-
-}
-
-.card:hover{
-
-transform:scale(1.05);
-box-shadow:0 0 25px #00b4ff;
-
+box-shadow:0 0 10px rgba(0,180,255,.5);
 }
 
 .card strong{
-
 font-size:14px;
+}
 
+.card:hover{
+box-shadow:0 0 20px #00b4ff;
 }
 
 /* RESPONSIVO */
@@ -170,7 +150,7 @@ flex-direction:column;
 }
 
 .cards{
-grid-template-columns:repeat(2,220px);
+grid-template-columns:repeat(2,200px);
 }
 
 }
@@ -182,7 +162,7 @@ grid-template-columns:1fr;
 }
 
 .mapa-container{
-width:300px;
+width:280px;
 }
 
 }
@@ -190,7 +170,6 @@ width:300px;
 </style>
 
 </head>
-
 
 <body>
 
@@ -201,9 +180,7 @@ width:300px;
 <h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
 
 <div class="status">
-
 Disponibilidade Geral: <span id="percentual">100%</span>
-
 </div>
 
 </header>
@@ -239,17 +216,14 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 
 /* FULLSCREEN AUTOMÁTICO */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-if (document.documentElement.requestFullscreen) {
-
+if(document.documentElement.requestFullscreen){
 document.documentElement.requestFullscreen()
-
 }
 
 })
 
-/* NOMES */
 
 const nomes = {
 
@@ -263,7 +237,6 @@ const nomes = {
 
 }
 
-/* CARREGAR DADOS */
 
 async function carregar(){
 
@@ -271,9 +244,9 @@ const resposta = await fetch("/dados")
 
 const dados = await resposta.json()
 
-document.getElementById("percentual").innerText = dados.percentual + "%"
+document.getElementById("percentual").innerText=dados.percentual+"%"
 
-const grid = document.getElementById("grid")
+const grid=document.getElementById("grid")
 
 grid.innerHTML=""
 
@@ -307,7 +280,5 @@ setInterval(carregar,30000)
 
 </script>
 
-
 </body>
-
 </html>
