@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Monitoramento</title>
 
@@ -16,10 +16,8 @@ padding:0;
 box-sizing:border-box;
 }
 
-html,body{
-height:100vh;
-overflow:hidden;
-font-family:Arial;
+body{
+font-family:Arial, Helvetica, sans-serif;
 background:#020617;
 color:white;
 }
@@ -28,73 +26,62 @@ color:white;
 
 header{
 text-align:center;
-padding:10px;
-height:140px;
+padding:15px 10px;
 }
 
 header img{
-height:60px;
+height:55px;
 filter:drop-shadow(0 0 10px #00b4ff);
 }
 
 h1{
 margin-top:8px;
-font-size:26px;
+font-size:22px;
 color:#7dd3fc;
 }
 
 .status{
 color:#38bdf8;
-margin-top:5px;
+margin-top:4px;
+font-size:14px;
 }
 
 /* LAYOUT */
 
 .container{
-
-display:grid;
-grid-template-columns:380px 1fr;
-gap:30px;
-height:calc(100vh - 140px);
-max-width:1300px;
-margin:auto;
+display:flex;
+flex-direction:column;
 align-items:center;
-
+gap:25px;
+padding:15px;
+max-width:1200px;
+margin:auto;
 }
 
 /* MAPA */
 
 .mapa{
-
 width:100%;
-max-width:380px;
-margin:auto;
-
+max-width:300px;
 }
 
 .mapa img{
-
 width:100%;
 height:auto;
-
 }
 
 /* CARDS */
 
 .cards{
-
+width:100%;
 display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-height:100%;
-align-content:center;
-
+grid-template-columns:1fr;
+gap:16px;
 }
 
 /* CARD */
 
 .card{
-
 background:#0b1220;
 border-radius:12px;
 padding:18px;
@@ -103,26 +90,21 @@ border:1px solid rgba(0,180,255,.4);
 box-shadow:0 0 12px rgba(0,180,255,.5);
 display:flex;
 flex-direction:column;
-justify-content:center;
+align-items:center;
 gap:8px;
-
 }
 
 /* RADAR */
 
 .radar{
-
 width:12px;
 height:12px;
 background:#22c55e;
 border-radius:50%;
-margin:auto;
 position:relative;
-
 }
 
 .radar::after{
-
 content:'';
 position:absolute;
 width:20px;
@@ -132,7 +114,6 @@ border:2px solid #22c55e;
 top:-4px;
 left:-4px;
 animation:pulse 2s infinite;
-
 }
 
 @keyframes pulse{
@@ -155,47 +136,38 @@ font-size:15px;
 
 /* TABLET */
 
-@media(max-width:1000px){
+@media(min-width:700px){
+
+.mapa{
+max-width:350px;
+}
+
+.cards{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+/* DESKTOP */
+
+@media(min-width:1000px){
 
 .container{
-
-grid-template-columns:1fr;
-grid-template-rows:auto 1fr;
-
-}
-
-.cards{
-
-grid-template-columns:repeat(2,1fr);
-
+flex-direction:row;
+align-items:center;
+justify-content:center;
 }
 
 .mapa{
-
-max-width:320px;
-
+max-width:420px;
 }
-
-}
-
-/* CELULAR */
-
-@media(max-width:600px){
 
 .cards{
-
-grid-template-columns:1fr;
-
-}
-
-.mapa{
-
-max-width:240px;
-
+grid-template-columns:repeat(3,1fr);
 }
 
 h1{
-font-size:20px;
+font-size:28px;
 }
 
 }
@@ -203,7 +175,6 @@ font-size:20px;
 </style>
 
 </head>
-
 
 <body>
 
@@ -219,20 +190,15 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 
 </header>
 
-
 <div class="container">
 
 <div class="mapa">
-
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
-
 </div>
-
 
 <div class="cards" id="grid"></div>
 
 </div>
-
 
 <script>
 
@@ -251,7 +217,6 @@ const nomes = {
 async function carregar(){
 
 const resposta = await fetch("/dados")
-
 const dados = await resposta.json()
 
 document.getElementById("percentual").innerText = dados.percentual + "%"
@@ -287,7 +252,6 @@ carregar()
 setInterval(carregar,30000)
 
 </script>
-
 
 </body>
 
