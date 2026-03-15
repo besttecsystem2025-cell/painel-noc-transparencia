@@ -10,7 +10,7 @@
 
 <style>
 
-/* RESET */
+/* RESET TOTAL */
 
 *{
 margin:0;
@@ -18,52 +18,66 @@ padding:0;
 box-sizing:border-box;
 }
 
+/* TRAVA A TELA */
+
 html,body{
-width:100%;
-overflow-x:hidden;
-font-family:Arial, Helvetica, sans-serif;
+width:100vw;
+height:100vh;
+overflow:hidden;
 background:#020617;
+font-family:Arial, Helvetica, sans-serif;
 color:white;
 }
 
 /* HEADER */
 
 header{
+
 text-align:center;
-padding:20px 10px;
+
+padding:10px;
+
 }
 
 header img{
-height:60px;
-margin-bottom:10px;
+
+height:55px;
+
 filter:drop-shadow(0 0 10px #00bfff);
+
 }
 
 h1{
+
 color:#7dd3fc;
+
 font-size:28px;
+
+margin-top:5px;
+
 }
 
 .status{
+
 color:#38bdf8;
-margin-top:5px;
+
 font-size:16px;
+
 }
 
 /* LAYOUT */
 
 .container{
 
-max-width:1300px;
-width:100%;
-
-margin:auto;
+width:100vw;
+height:calc(100vh - 110px);
 
 display:flex;
-flex-direction:column;
 
+justify-content:center;
 align-items:center;
-gap:30px;
+
+gap:40px;
 
 padding:20px;
 
@@ -73,26 +87,25 @@ padding:20px;
 
 .mapa{
 
-width:100%;
-max-width:420px;
+width:420px;
 
 }
 
 .mapa img{
+
 width:100%;
-height:auto;
+
 }
 
 /* CARDS */
 
 .cards{
 
-width:100%;
-
 display:grid;
-grid-template-columns:1fr;
 
-gap:20px;
+grid-template-columns:repeat(3, 260px);
+
+gap:25px;
 
 }
 
@@ -113,7 +126,9 @@ border:1px solid rgba(0,180,255,.4);
 box-shadow:0 0 15px rgba(0,180,255,.4);
 
 display:flex;
+
 flex-direction:column;
+
 align-items:center;
 
 gap:10px;
@@ -158,7 +173,7 @@ animation:pulse 2s infinite;
 @keyframes pulse{
 
 0%{
-transform:scale(.6);
+transform:scale(.5);
 opacity:1;
 }
 
@@ -170,70 +185,54 @@ opacity:0;
 }
 
 .card strong{
+
 font-size:16px;
+
 }
 
 .card span{
+
 font-size:18px;
-}
-
-/* TABLET */
-
-@media(min-width:700px){
-
-.cards{
-grid-template-columns:repeat(2,1fr);
-}
-
-.mapa{
-max-width:450px;
-}
 
 }
 
-/* NOTEBOOK */
+/* RESPONSIVO */
 
-@media(min-width:1000px){
+@media(max-width:1100px){
 
 .container{
 
-flex-direction:row;
+flex-direction:column;
 
-align-items:flex-start;
+}
 
-justify-content:center;
+.cards{
+
+grid-template-columns:repeat(2, 260px);
 
 }
 
 .mapa{
 
-flex:1;
-
-max-width:500px;
+width:300px;
 
 }
+
+}
+
+@media(max-width:600px){
 
 .cards{
 
-flex:2;
+grid-template-columns:1fr;
 
-grid-template-columns:repeat(3,1fr);
-
-}
+width:90%;
 
 }
 
-/* TV / TELAS GRANDES */
+.mapa{
 
-@media(min-width:1600px){
-
-h1{
-font-size:34px;
-}
-
-.cards{
-
-grid-template-columns:repeat(4,1fr);
+width:250px;
 
 }
 
@@ -243,9 +242,7 @@ grid-template-columns:repeat(4,1fr);
 
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -259,37 +256,26 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 
 </header>
 
-
 <div class="container">
 
 <div class="mapa">
-
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
-
 </div>
-
 
 <div class="cards" id="grid"></div>
 
 </div>
-
 
 <script>
 
 const nomes = {
 
 "Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
-
 "Valparaíso":"Câmara Municipal de Valparaíso",
-
 "São João d'Aliança":"Câmara Municipal de São João d'Aliança",
-
 "Alto Paraíso":"Câmara Municipal de Alto Paraíso",
-
 "Luziânia":"Câmara Municipal de Luziânia",
-
 "Simolândia":"Prefeitura de Simolândia",
-
 "Terezópolis":"Prefeitura de Terezópolis"
 
 }
@@ -308,7 +294,7 @@ grid.innerHTML=""
 
 dados.portais.forEach(p=>{
 
-grid.innerHTML += `
+grid.innerHTML+=`
 
 <div class="card">
 
@@ -333,7 +319,6 @@ carregar()
 setInterval(carregar,30000)
 
 </script>
-
 
 </body>
 
