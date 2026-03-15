@@ -6,9 +6,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Monitoramento</title>
+<title>Monitoramento Transparência</title>
 
 <style>
+
+/* RESET */
 
 *{
 margin:0;
@@ -16,7 +18,9 @@ padding:0;
 box-sizing:border-box;
 }
 
-body{
+html,body{
+width:100%;
+overflow-x:hidden;
 font-family:Arial, Helvetica, sans-serif;
 background:#020617;
 color:white;
@@ -26,43 +30,52 @@ color:white;
 
 header{
 text-align:center;
-padding:15px 10px;
+padding:20px 10px;
 }
 
 header img{
-height:55px;
-filter:drop-shadow(0 0 10px #00b4ff);
+height:60px;
+margin-bottom:10px;
+filter:drop-shadow(0 0 10px #00bfff);
 }
 
 h1{
-margin-top:8px;
-font-size:22px;
 color:#7dd3fc;
+font-size:28px;
 }
 
 .status{
 color:#38bdf8;
-margin-top:4px;
-font-size:14px;
+margin-top:5px;
+font-size:16px;
 }
 
 /* LAYOUT */
 
 .container{
+
+max-width:1300px;
+width:100%;
+
+margin:auto;
+
 display:flex;
 flex-direction:column;
+
 align-items:center;
-gap:25px;
-padding:15px;
-max-width:1200px;
-margin:auto;
+gap:30px;
+
+padding:20px;
+
 }
 
 /* MAPA */
 
 .mapa{
+
 width:100%;
-max-width:300px;
+max-width:420px;
+
 }
 
 .mapa img{
@@ -73,53 +86,79 @@ height:auto;
 /* CARDS */
 
 .cards{
+
 width:100%;
+
 display:grid;
 grid-template-columns:1fr;
-gap:16px;
+
+gap:20px;
+
 }
 
 /* CARD */
 
 .card{
+
 background:#0b1220;
+
 border-radius:12px;
-padding:18px;
+
+padding:25px;
+
 text-align:center;
+
 border:1px solid rgba(0,180,255,.4);
-box-shadow:0 0 12px rgba(0,180,255,.5);
+
+box-shadow:0 0 15px rgba(0,180,255,.4);
+
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:8px;
+
+gap:10px;
+
 }
 
 /* RADAR */
 
 .radar{
-width:12px;
-height:12px;
+
+width:14px;
+height:14px;
+
 background:#22c55e;
+
 border-radius:50%;
+
 position:relative;
+
 }
 
 .radar::after{
+
 content:'';
+
 position:absolute;
-width:20px;
-height:20px;
+
+width:24px;
+height:24px;
+
 border-radius:50%;
+
 border:2px solid #22c55e;
-top:-4px;
-left:-4px;
+
+top:-5px;
+left:-5px;
+
 animation:pulse 2s infinite;
+
 }
 
 @keyframes pulse{
 
 0%{
-transform:scale(.5);
+transform:scale(.6);
 opacity:1;
 }
 
@@ -131,43 +170,71 @@ opacity:0;
 }
 
 .card strong{
-font-size:15px;
+font-size:16px;
+}
+
+.card span{
+font-size:18px;
 }
 
 /* TABLET */
 
 @media(min-width:700px){
 
-.mapa{
-max-width:350px;
-}
-
 .cards{
 grid-template-columns:repeat(2,1fr);
 }
 
+.mapa{
+max-width:450px;
 }
 
-/* DESKTOP */
+}
+
+/* NOTEBOOK */
 
 @media(min-width:1000px){
 
 .container{
+
 flex-direction:row;
-align-items:center;
+
+align-items:flex-start;
+
 justify-content:center;
+
 }
 
 .mapa{
-max-width:420px;
+
+flex:1;
+
+max-width:500px;
+
 }
 
 .cards{
+
+flex:2;
+
 grid-template-columns:repeat(3,1fr);
+
 }
 
+}
+
+/* TV / TELAS GRANDES */
+
+@media(min-width:1600px){
+
 h1{
-font-size:28px;
+font-size:34px;
+}
+
+.cards{
+
+grid-template-columns:repeat(4,1fr);
+
 }
 
 }
@@ -176,7 +243,9 @@ font-size:28px;
 
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -190,26 +259,37 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 
 </header>
 
+
 <div class="container">
 
 <div class="mapa">
+
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
+
 </div>
+
 
 <div class="cards" id="grid"></div>
 
 </div>
+
 
 <script>
 
 const nomes = {
 
 "Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
+
 "Valparaíso":"Câmara Municipal de Valparaíso",
+
 "São João d'Aliança":"Câmara Municipal de São João d'Aliança",
+
 "Alto Paraíso":"Câmara Municipal de Alto Paraíso",
+
 "Luziânia":"Câmara Municipal de Luziânia",
+
 "Simolândia":"Prefeitura de Simolândia",
+
 "Terezópolis":"Prefeitura de Terezópolis"
 
 }
@@ -217,6 +297,7 @@ const nomes = {
 async function carregar(){
 
 const resposta = await fetch("/dados")
+
 const dados = await resposta.json()
 
 document.getElementById("percentual").innerText = dados.percentual + "%"
@@ -227,7 +308,7 @@ grid.innerHTML=""
 
 dados.portais.forEach(p=>{
 
-grid.innerHTML+=`
+grid.innerHTML += `
 
 <div class="card">
 
@@ -235,9 +316,9 @@ grid.innerHTML+=`
 
 <strong>${nomes[p.nome]}</strong>
 
-${p.status}
+<span>${p.status}</span>
 
-${p.tempo} ms
+<span>${p.tempo} ms</span>
 
 </div>
 
@@ -252,6 +333,7 @@ carregar()
 setInterval(carregar,30000)
 
 </script>
+
 
 </body>
 
