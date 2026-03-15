@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Monitoramento Transparência</title>
 
 <style>
@@ -58,12 +59,9 @@ align-items:center;
 
 .mapa{
 position:relative;
-width:520px;
-height:520px;
+width:650px;
+height:650px;
 margin:auto;
-overflow:hidden;
-transform:scale(1.25);
-transform-origin:center;
 }
 
 .mapa img{
@@ -78,8 +76,8 @@ object-fit:contain;
 
 position:absolute;
 
-width:6px;
-height:6px;
+width:8px;
+height:8px;
 
 background:#22c55e;
 
@@ -94,11 +92,11 @@ animation:pulse 2s infinite;
 @keyframes pulse{
 
 0%{
-box-shadow:0 0 0 0 rgba(34,197,94,0.8);
+box-shadow:0 0 0 0 rgba(34,197,94,0.9);
 }
 
 70%{
-box-shadow:0 0 0 16px rgba(34,197,94,0);
+box-shadow:0 0 0 18px rgba(34,197,94,0);
 }
 
 100%{
@@ -107,15 +105,15 @@ box-shadow:0 0 0 0 rgba(34,197,94,0);
 
 }
 
-/* POSIÇÕES ORIGINAIS */
+/* POSIÇÕES AJUSTADAS PARA MAPA GRANDE */
 
-#altoparaiso{top:135px;left:270px;}
-#saojoao{top:205px;left:310px;}
-#luziania{top:295px;left:280px;}
-#cidadeocidental{top:320px;left:160px;}
-#valparaiso{top:275px;left:220px;}
-#terezopolis{top:350px;left:240px;}
-#simolandia{top:325px;left:345px;}
+#altoparaiso{top:165px;left:340px;}
+#saojoao{top:255px;left:395px;}
+#luziania{top:360px;left:340px;}
+#cidadeocidental{top:390px;left:195px;}
+#valparaiso{top:340px;left:270px;}
+#terezopolis{top:435px;left:300px;}
+#simolandia{top:410px;left:440px;}
 
 /* CARDS */
 
@@ -156,7 +154,8 @@ gap:40px;
 }
 
 .mapa{
-transform:scale(1);
+width:520px;
+height:520px;
 }
 
 .cards{
