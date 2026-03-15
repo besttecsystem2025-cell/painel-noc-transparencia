@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Monitoramento</title>
 
@@ -16,83 +16,95 @@ padding:0;
 box-sizing:border-box;
 }
 
-html,body{
-height:100%;
-overflow:hidden;
+body{
 font-family:Arial;
 background:#020617;
 color:white;
+overflow-x:hidden;
 }
 
 /* HEADER */
 
 header{
 text-align:center;
-padding-top:15px;
+padding:20px 10px;
 }
 
 header img{
 height:70px;
-filter:drop-shadow(0 0 12px #00b4ff);
+filter:drop-shadow(0 0 10px #00b4ff);
 }
 
 h1{
-margin-top:8px;
+margin-top:10px;
 font-size:28px;
 color:#7dd3fc;
 }
 
 .status{
 color:#38bdf8;
-margin-top:6px;
+margin-top:5px;
 }
 
 /* LAYOUT */
 
-.main{
-display:flex;
-justify-content:center;
-align-items:center;
+.container{
+
+display:grid;
+grid-template-columns:450px 1fr;
 gap:40px;
-height:calc(100vh - 150px);
+max-width:1300px;
+margin:auto;
+align-items:center;
+
 }
 
 /* MAPA */
 
-.mapa-container{
+.mapa{
+
 position:relative;
-width:420px;
+width:100%;
+max-width:450px;
+aspect-ratio:1/1;
 overflow:hidden;
+
 }
 
-.mapa-container img{
+.mapa img{
 width:100%;
+height:100%;
+object-fit:contain;
 }
 
 /* RADAR */
 
 .radar{
+
 position:absolute;
 width:10px;
 height:10px;
 background:#22c55e;
 border-radius:50%;
 transform:translate(-50%,-50%);
+
 }
 
 .radar::after{
+
 content:'';
 position:absolute;
-width:22px;
-height:22px;
+width:20px;
+height:20px;
 border-radius:50%;
 border:2px solid #22c55e;
-top:-6px;
-left:-6px;
-animation:radar 2s infinite;
+top:-5px;
+left:-5px;
+animation:pulse 2s infinite;
+
 }
 
-@keyframes radar{
+@keyframes pulse{
 
 0%{
 transform:scale(.5);
@@ -100,7 +112,7 @@ opacity:1;
 }
 
 100%{
-transform:scale(1.6);
+transform:scale(2);
 opacity:0;
 }
 
@@ -108,61 +120,86 @@ opacity:0;
 
 /* POSIÇÃO DAS CIDADES */
 
-#altoparaiso{top:27%;left:52%;}
-#saojoao{top:41%;left:60%;}
-#luziania{top:55%;left:50%;}
-#cidadeocidental{top:60%;left:30%;}
-#valparaiso{top:52%;left:40%;}
-#terezopolis{top:72%;left:46%;}
-#simolandia{top:66%;left:72%;}
+#altoparaiso{top:26%;left:53%;}
+#saojoao{top:41%;left:61%;}
+#luziania{top:56%;left:51%;}
+#cidadeocidental{top:61%;left:32%;}
+#valparaiso{top:53%;left:42%;}
+#terezopolis{top:72%;left:47%;}
+#simolandia{top:67%;left:74%;}
 
 /* CARDS */
 
 .cards{
+
 display:grid;
-grid-template-columns:repeat(3,200px);
-gap:16px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+
 }
 
 .card{
+
 background:#0b1220;
-border-radius:10px;
-padding:14px;
+border-radius:12px;
+padding:20px;
 text-align:center;
 border:1px solid rgba(0,180,255,.4);
-box-shadow:0 0 10px rgba(0,180,255,.5);
-}
+box-shadow:0 0 12px rgba(0,180,255,.5);
+transition:.3s;
 
-.card strong{
-font-size:14px;
 }
 
 .card:hover{
+
+transform:scale(1.03);
 box-shadow:0 0 20px #00b4ff;
-}
-
-/* RESPONSIVO */
-
-@media(max-width:1200px){
-
-.main{
-flex-direction:column;
-}
-
-.cards{
-grid-template-columns:repeat(2,200px);
-}
 
 }
 
-@media(max-width:700px){
+.card strong{
 
-.cards{
+font-size:15px;
+
+}
+
+/* TABLET */
+
+@media(max-width:1000px){
+
+.container{
+
 grid-template-columns:1fr;
+text-align:center;
+
 }
 
-.mapa-container{
-width:280px;
+.mapa{
+
+margin:auto;
+
+}
+
+}
+
+/* CELULAR */
+
+@media(max-width:600px){
+
+h1{
+font-size:22px;
+}
+
+.mapa{
+
+display:none;
+
+}
+
+.cards{
+
+grid-template-columns:1fr;
+
 }
 
 }
@@ -170,6 +207,7 @@ width:280px;
 </style>
 
 </head>
+
 
 <body>
 
@@ -186,11 +224,11 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 </header>
 
 
-<div class="main">
+<div class="container">
 
 <!-- MAPA -->
 
-<div class="mapa-container">
+<div class="mapa">
 
 <img src="{{ url_for('static', filename='mapa-goias.png') }}">
 
@@ -205,25 +243,12 @@ Disponibilidade Geral: <span id="percentual">100%</span>
 </div>
 
 
-<!-- CARDS -->
-
 <div class="cards" id="grid"></div>
 
 </div>
 
 
 <script>
-
-/* FULLSCREEN AUTOMÁTICO */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-if(document.documentElement.requestFullscreen){
-document.documentElement.requestFullscreen()
-}
-
-})
-
 
 const nomes = {
 
@@ -237,16 +262,15 @@ const nomes = {
 
 }
 
-
 async function carregar(){
 
 const resposta = await fetch("/dados")
 
 const dados = await resposta.json()
 
-document.getElementById("percentual").innerText=dados.percentual+"%"
+document.getElementById("percentual").innerText = dados.percentual + "%"
 
-const grid=document.getElementById("grid")
+const grid = document.getElementById("grid")
 
 grid.innerHTML=""
 
@@ -281,4 +305,5 @@ setInterval(carregar,30000)
 </script>
 
 </body>
+
 </html>
