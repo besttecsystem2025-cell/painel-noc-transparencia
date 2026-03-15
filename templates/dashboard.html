@@ -18,7 +18,7 @@ padding:0;
 box-sizing:border-box;
 }
 
-/* TELA TRAVADA */
+/* TELA */
 
 html,body{
 width:100vw;
@@ -60,7 +60,6 @@ width:100%;
 height:calc(100vh - 100px);
 
 display:flex;
-
 justify-content:center;
 align-items:center;
 
@@ -75,7 +74,12 @@ padding:20px;
 .mapa{
 
 width:420px;
+
 position:relative;
+
+overflow:hidden;
+
+border-radius:10px;
 
 }
 
@@ -83,9 +87,11 @@ position:relative;
 
 width:100%;
 
+display:block;
+
 }
 
-/* SCAN DO MAPA */
+/* SCANNER */
 
 .scan{
 
@@ -98,19 +104,22 @@ width:100%;
 height:100%;
 
 background:linear-gradient(
-to bottom,
-transparent,
-rgba(0,255,200,0.2),
-transparent
+180deg,
+transparent 0%,
+rgba(0,255,200,0.25) 50%,
+transparent 100%
 );
 
-animation:scan 4s linear infinite;
+animation:scan 5s linear infinite;
+
+pointer-events:none;
 
 }
 
 @keyframes scan{
 
 0%{transform:translateY(-100%)}
+
 100%{transform:translateY(100%)}
 
 }
@@ -184,15 +193,15 @@ content:'';
 
 position:absolute;
 
-width:30px;
-height:30px;
+width:28px;
+height:28px;
 
 border-radius:50%;
 
 border:2px solid #22c55e;
 
-top:-8px;
-left:-8px;
+top:-7px;
+left:-7px;
 
 animation:radar 2s infinite;
 
@@ -201,7 +210,7 @@ animation:radar 2s infinite;
 @keyframes radar{
 
 0%{
-transform:scale(.5);
+transform:scale(.6);
 opacity:1;
 }
 
@@ -228,6 +237,8 @@ font-size:18px;
 
 flex-direction:column;
 
+height:auto;
+
 }
 
 .cards{
@@ -246,6 +257,12 @@ width:320px;
 
 @media(max-width:600px){
 
+html,body{
+
+overflow:auto;
+
+}
+
 .cards{
 
 grid-template-columns:1fr;
@@ -256,7 +273,7 @@ width:90%;
 
 .mapa{
 
-width:260px;
+width:250px;
 
 }
 
