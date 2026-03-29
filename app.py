@@ -16,17 +16,29 @@ links = {
 }
 
 def verificar(url):
-    try:
-        inicio = time.time()
-        r = requests.get(url, timeout=5)
-        tempo = int((time.time() - inicio) * 1000)
+    tentativas = 2
+    for tentativa in range(tentativas):
+        try:
+            inicio = time.time()
 
-        if r.status_code == 200:
-            return {"status": "DISPONÍVEL", "tempo": tempo}
-        else:
-            return {"status": "INSTÁVEL", "tempo": tempo}
-    except:
-        return {"status": "FORA DO AR", "tempo": 0}
+            headers = {
+                "User-Agent": "Mozilla/5.0"
+            }
+
+            r = requests.get(url, timeout=6, headers=headers)
+            tempo = int((time.time() - inicio) * 1000)
+
+            if r.status_code == 200:
+                if tempo < 400:
+                    return {"status": "DISPONÍVEL", "tempo": tempo}
+                else:
+                    return {"status": "LENTO", "tempo": tempo}
+            else:
+                return {"status": "INSTÁVEL", "tempo": tempo}
+
+        except:
+            if tentativa == tentativas - 1:
+                return {"status": "FORA DO AR", "tempo": 0}
 
 
 @app.route("/")
