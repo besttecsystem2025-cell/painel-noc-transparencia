@@ -1,85 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Painel NOC</title>
+<style>
+body{
+    margin:0;
+    background:#020617;
+    color:#00ff88;
+    font-family:Arial;
+    text-align:center;
+}
+h1{margin-top:30px;}
+.card{
+    background:#0f172a;
+    margin:15px auto;
+    padding:20px;
+    border-radius:10px;
+    width:90%;
+    max-width:400px;
+    box-shadow:0 0 15px #00ff88;
+}
+</style>
+</head>
 
-import express from "express";
-import axios from "axios";
+<body>
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+<h1>Monitoramento de Portais</h1>
 
-/* LISTA DOS PORTAIS */
-const targets = [
-  { nome: "Cidade Ocidental", url: "https://transparencia.cidadeocidental.go.leg.br/" },
-  { nome: "Valparaíso", url: "https://transparencia.camaravalparparaiso.go.gov.br/" },
-  { nome: "São João d'Aliança", url: "https://transparencia.saojoaodalianca.go.leg.br/" },
-  { nome: "Alto Paraíso", url: "https://transparencia.altoparaisodegoias.go.leg.br/" },
-  { nome: "Luziânia", url: "https://transparencia.luziania.go.leg.br/" },
-  { nome: "Simolândia", url: "https://transparencia.simolandia.go.gov.br/" },
-  { nome: "Terezópolis", url: "https://transparencia.terezopolis.go.gov.br/" },
+<div id="dados"></div>
 
-  /* ACREÚNA CORRIGIDO */
-  { nome: "Acreúna", url: "https://transparencia.acreuna.go.gov.br/" }
-];
-
-/* MONITORAMENTO PROFUNDO */
-async function checkSite(target) {
-
-  const start = Date.now();
-
-  try {
-
-    const response = await axios.get(target.url, {
-      timeout: 10000,
-      maxRedirects: 5, // permite redirecionamento correto
-      validateStatus: () => true
+<script>
+function carregar(){
+    fetch('/dados')
+    .then(r=>r.json())
+    .then(data=>{
+        let html="";
+        for(let nome in data){
+            let d = data[nome];
+            html += `
+            <div class="card">
+                <h3>${nome}</h3>
+                <p>${d.status}</p>
+                <p>${d.tempo} ms</p>
+            </div>`;
+        }
+        document.getElementById("dados").innerHTML = html;
     });
-
-    const tempo = Date.now() - start;
-
-    let status = "ONLINE";
-
-    if (response.status >= 500) status = "OFFLINE";
-    else if (tempo > 800) status = "LENTO";
-
-    return {
-      nome: target.nome,
-      status,
-      tempo,
-      http: response.status
-    };
-
-  } catch (error) {
-
-    return {
-      nome: target.nome,
-      status: "OFFLINE",
-      tempo: null,
-      http: "erro"
-    };
-
-  }
 }
 
-/* API */
-app.get("/dados", async (req, res) => {
+carregar();
+setInterval(carregar, 10000);
+</script>
 
-  const resultados = await Promise.all(targets.map(checkSite));
-
-  const online = resultados.filter(r => r.status === "ONLINE").length;
-  const percentual = Math.round((online / resultados.length) * 100);
-
-  res.json({
-    percentual,
-    portais: resultados
-  });
-
-});
-
-/* KEEP ALIVE */
-setInterval(() => {
-  if (process.env.RENDER_URL) {
-    axios.get(process.env.RENDER_URL + "/dados").catch(() => {});
-  }
-}, 60000);
-
-app.listen(PORT, () => {
-  console.log("Servidor rodando...");
-});
+</body>
+</html>
