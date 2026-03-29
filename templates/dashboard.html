@@ -1,416 +1,85 @@
-<!DOCTYPE html>
-<html lang="pt-br">
 
-<head>
+import express from "express";
+import axios from "axios";
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-<title>Centro de Monitoramento</title>
+/* LISTA DOS PORTAIS */
+const targets = [
+  { nome: "Cidade Ocidental", url: "https://transparencia.cidadeocidental.go.leg.br/" },
+  { nome: "Valparaíso", url: "https://transparencia.camaravalparparaiso.go.gov.br/" },
+  { nome: "São João d'Aliança", url: "https://transparencia.saojoaodalianca.go.leg.br/" },
+  { nome: "Alto Paraíso", url: "https://transparencia.altoparaisodegoias.go.leg.br/" },
+  { nome: "Luziânia", url: "https://transparencia.luziania.go.leg.br/" },
+  { nome: "Simolândia", url: "https://transparencia.simolandia.go.gov.br/" },
+  { nome: "Terezópolis", url: "https://transparencia.terezopolis.go.gov.br/" },
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  /* ACREÚNA CORRIGIDO */
+  { nome: "Acreúna", url: "https://transparencia.acreuna.go.gov.br/" }
+];
 
-<style>
+/* MONITORAMENTO PROFUNDO */
+async function checkSite(target) {
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+  const start = Date.now();
+
+  try {
+
+    const response = await axios.get(target.url, {
+      timeout: 10000,
+      maxRedirects: 5, // permite redirecionamento correto
+      validateStatus: () => true
+    });
+
+    const tempo = Date.now() - start;
+
+    let status = "ONLINE";
+
+    if (response.status >= 500) status = "OFFLINE";
+    else if (tempo > 800) status = "LENTO";
+
+    return {
+      nome: target.nome,
+      status,
+      tempo,
+      http: response.status
+    };
+
+  } catch (error) {
+
+    return {
+      nome: target.nome,
+      status: "OFFLINE",
+      tempo: null,
+      http: "erro"
+    };
+
+  }
 }
 
-html,body{
-width:100vw;
-height:100vh;
-overflow:hidden;
-background:#020617;
-font-family:Arial;
-color:white;
-}
-
-/* HEADER */
-
-header{
-text-align:center;
-padding:10px;
-}
-
-header img{
-height:55px;
-filter:drop-shadow(0 0 10px #00bfff);
-}
-
-h1{
-font-size:26px;
-color:#7dd3fc;
-}
-
-.status{
-color:#38bdf8;
-}
-
-/* LAYOUT */
-
-.container{
-
-width:100%;
-height:calc(100vh - 100px);
-
-display:flex;
-
-justify-content:center;
-align-items:center;
-
-gap:40px;
-
-}
-
-/* MAPA */
-
-.mapa{
-
-width:420px;
-
-position:relative;
-
-overflow:hidden;
-
-}
-
-.mapa img{
-width:100%;
-}
-
-/* SCAN */
-
-.scan{
-
-position:absolute;
-
-width:100%;
-height:100%;
-
-background:linear-gradient(
-180deg,
-transparent,
-rgba(0,255,200,0.25),
-transparent
-);
-
-animation:scan 5s linear infinite;
-
-}
-
-@keyframes scan{
-
-0%{transform:translateY(-100%)}
-100%{transform:translateY(100%)}
-
-}
-
-/* RADAR NAS CIDADES */
-
-.city{
-
-position:absolute;
-
-width:10px;
-height:10px;
-
-background:#22c55e;
-
-border-radius:50%;
-
-}
-
-.city::after{
-
-content:'';
-
-position:absolute;
-
-width:24px;
-height:24px;
-
-border-radius:50%;
-
-border:2px solid #22c55e;
-
-top:-7px;
-left:-7px;
-
-animation:radar 2s infinite;
-
-}
-
-@keyframes radar{
-
-0%{
-transform:scale(.5);
-opacity:1;
-}
-
-100%{
-transform:scale(2);
-opacity:0;
-}
-
-}
-
-/* POSIÇÕES */
-
-.alto{top:20%; left:45%;}
-.valparaiso{top:55%; left:35%;}
-.cidade{top:65%; left:28%;}
-.luziania{top:60%; left:55%;}
-.saojoao{top:35%; left:60%;}
-.simolandia{top:70%; left:70%;}
-.terezopolis{top:75%; left:45%;}
-
-/* CARDS */
-
-.cards{
-
-display:grid;
-
-grid-template-columns:repeat(3,260px);
-
-gap:20px;
-
-}
-
-/* CARD */
-
-.card{
-
-background:#0b1220;
-
-border-radius:12px;
-
-padding:20px;
-
-text-align:center;
-
-border:1px solid rgba(0,180,255,.4);
-
-box-shadow:0 0 15px rgba(0,180,255,.4);
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-gap:10px;
-
-}
-
-.radar{
-
-width:12px;
-height:12px;
-
-background:#22c55e;
-
-border-radius:50%;
-
-position:relative;
-
-}
-
-.radar::after{
-
-content:'';
-
-position:absolute;
-
-width:24px;
-height:24px;
-
-border-radius:50%;
-
-border:2px solid #22c55e;
-
-top:-6px;
-left:-6px;
-
-animation:radar 2s infinite;
-
-}
-
-/* GRÁFICO */
-
-.grafico{
-
-position:absolute;
-
-bottom:20px;
-
-right:20px;
-
-width:350px;
-
-background:#0b1220;
-
-padding:15px;
-
-border-radius:10px;
-
-border:1px solid rgba(0,180,255,.4);
-
-box-shadow:0 0 10px #00bfff;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<img src="{{ url_for('static', filename='Governo Digital.png') }}">
-
-<h1>MONITORAMENTO DOS PORTAIS DE TRANSPARÊNCIA</h1>
-
-<div class="status">
-Disponibilidade Geral: <span id="percentual">100%</span>
-</div>
-
-</header>
-
-<div class="container">
-
-<div class="mapa">
-
-<img src="{{ url_for('static', filename='mapa-goias.png') }}">
-
-<div class="scan"></div>
-
-<div class="city alto"></div>
-<div class="city valparaiso"></div>
-<div class="city cidade"></div>
-<div class="city luziania"></div>
-<div class="city saojoao"></div>
-<div class="city simolandia"></div>
-<div class="city terezopolis"></div>
-
-</div>
-
-<div class="cards" id="grid"></div>
-
-</div>
-
-<div class="grafico">
-
-<canvas id="uptime"></canvas>
-
-</div>
-
-<script>
-
-const nomes = {
-
-"Cidade Ocidental":"Câmara Municipal de Cidade Ocidental",
-"Valparaíso":"Câmara Municipal de Valparaíso",
-"São João d'Aliança":"Câmara Municipal de São João d'Aliança",
-"Alto Paraíso":"Câmara Municipal de Alto Paraíso",
-"Luziânia":"Câmara Municipal de Luziânia",
-"Simolândia":"Prefeitura de Simolândia",
-"Terezópolis":"Prefeitura de Terezópolis"
-
-}
-
-const ctx = document.getElementById('uptime');
-
-const chart = new Chart(ctx,{
-
-type:'line',
-
-data:{
-labels:[],
-datasets:[{
-
-label:'Disponibilidade',
-
-data:[],
-
-borderColor:'#22c55e',
-
-tension:.3
-
-}]
-},
-
-options:{
-scales:{
-y:{
-min:0,
-max:100
-}
-}
-}
-
-})
-
-async function carregar(){
-
-const resposta = await fetch("/dados")
-
-const dados = await resposta.json()
-
-document.getElementById("percentual").innerText = dados.percentual + "%"
-
-const grid = document.getElementById("grid")
-
-grid.innerHTML=""
-
-dados.portais.forEach(p=>{
-
-grid.innerHTML+=`
-
-<div class="card">
-
-<div class="radar"></div>
-
-<strong>${nomes[p.nome]}</strong>
-
-<span>${p.status}</span>
-
-<span>${p.tempo} ms</span>
-
-</div>
-
-`
-
-})
-
-/* atualizar gráfico */
-
-const agora = new Date().toLocaleTimeString()
-
-chart.data.labels.push(agora)
-
-chart.data.datasets[0].data.push(dados.percentual)
-
-if(chart.data.labels.length>10){
-
-chart.data.labels.shift()
-
-chart.data.datasets[0].data.shift()
-
-}
-
-chart.update()
-
-}
-
-carregar()
-
-setInterval(carregar,30000)
-
-</script>
-
-</body>
-
-</html>
+/* API */
+app.get("/dados", async (req, res) => {
+
+  const resultados = await Promise.all(targets.map(checkSite));
+
+  const online = resultados.filter(r => r.status === "ONLINE").length;
+  const percentual = Math.round((online / resultados.length) * 100);
+
+  res.json({
+    percentual,
+    portais: resultados
+  });
+
+});
+
+/* KEEP ALIVE */
+setInterval(() => {
+  if (process.env.RENDER_URL) {
+    axios.get(process.env.RENDER_URL + "/dados").catch(() => {});
+  }
+}, 60000);
+
+app.listen(PORT, () => {
+  console.log("Servidor rodando...");
+});
