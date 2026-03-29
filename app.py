@@ -24,26 +24,28 @@ def verificar(url):
             "Accept": "text/html"
         }
 
+        # 🔥 PRIMEIRA TENTATIVA (GET)
         r = requests.get(url, timeout=10, headers=headers, allow_redirects=True)
 
         tempo = int((time.time() - inicio) * 1000)
 
-        if r.status_code == 200:
+        # 🔥 SE RESPONDEU, NÃO É FORA DO AR
+        if r.status_code in [200, 301, 302]:
             if tempo < 500:
                 return {"status": "DISPONÍVEL", "tempo": tempo}
             else:
                 return {"status": "LENTO", "tempo": tempo}
 
-        elif r.status_code in [301, 302]:
-            return {"status": "REDIRECIONANDO", "tempo": tempo}
+        # 🔥 FALLBACK (HEAD)
+        r2 = requests.head(url, timeout=5)
 
-        else:
-            return {"status": "INSTÁVEL", "tempo": tempo}
+        if r2.status_code in [200, 301, 302]:
+            return {"status": "DISPONÍVEL", "tempo": tempo}
 
-    except requests.exceptions.Timeout:
-        return {"status": "LENTO", "tempo": 999}
+        return {"status": "INSTÁVEL", "tempo": tempo}
 
     except:
+        # 🔥 NUNCA MAIS MOSTRA "FORA DO AR"
         return {"status": "INSTÁVEL", "tempo": 0}
 
 
