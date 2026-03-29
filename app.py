@@ -1,101 +1,48 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, jsonify, render_template
 import requests
 import time
-import os
-from datetime import datetime
 
 app = Flask(__name__)
 
-PORTAIS = {
-    "Valparaíso": "https://transparencia.camaravalparaiso.go.gov.br/",
-    "Cidade Ocidental": "https://transparencia.cidadeocidental.go.leg.br/",
-    "Luziânia": "https://transparencia.luziania.go.leg.br/",
-    "São João d'Aliança": "https://transparencia.saojoaodalianca.go.leg.br/",
-    "Alto Paraíso": "https://transparencia.altoparaisodegoias.go.leg.br/",
-    "Simolândia": "https://transparencia.simolandia.go.gov.br/",
-    "Terezópolis": "https://transparencia.terezopolis.go.gov.br/"
+links = {
+    "Câmara Valparaíso": "https://valparaiso.go.leg.br/",
+    "Câmara Cidade Ocidental": "https://cidadeocidental.go.leg.br/",
+    "Câmara Luziânia": "https://luziania.go.leg.br/",
+    "Câmara São João d'Aliança": "https://saojoaodalianca.go.leg.br/",
+    "Câmara Alto Paraíso": "https://altoparaiso.go.leg.br/",
+    "Prefeitura Simolândia": "https://simolandia.go.gov.br/",
+    "Prefeitura Terezópolis": "https://terezopolis.go.gov.br/",
+    "Prefeitura Acreúna": "https://transparencia.acreuna.go.gov.br/"
 }
 
-def verificar_portal(nome, url):
-
-    inicio = time.time()
-
+def verificar(url):
     try:
+        inicio = time.time()
+        r = requests.get(url, timeout=5)
+        tempo = int((time.time() - inicio) * 1000)
 
-        resposta = requests.get(
-            url,
-            timeout=10,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            }
-        )
-
-        tempo = round((time.time() - inicio) * 1000)
-
-        if resposta.status_code == 200:
-            status = "DISPONÍVEL"
-
-        elif resposta.status_code >= 500:
-            status = "ERRO SERVIDOR"
-
-        elif resposta.status_code >= 400:
-            status = "ERRO PÁGINA"
-
+        if r.status_code == 200:
+            return {"status": "DISPONÍVEL", "tempo": tempo}
         else:
-            status = "INSTÁVEL"
+            return {"status": "INSTÁVEL", "tempo": tempo}
+    except:
+        return {"status": "FORA DO AR", "tempo": 0}
 
-    except requests.exceptions.Timeout:
-        status = "TIMEOUT"
-        tempo = 0
-
-    except requests.exceptions.ConnectionError:
-        status = "INDISPONÍVEL"
-        tempo = 0
-
-    except Exception:
-        status = "ERRO"
-        tempo = 0
-
-    return {
-        "nome": nome,
-        "status": status,
-        "tempo": tempo
-    }
 
 @app.route("/")
-def index():
+def home():
     return render_template("dashboard.html")
+
 
 @app.route("/dados")
 def dados():
+    resultado = {}
 
-    resultados = []
-    disponiveis = 0
+    for nome, url in links.items():
+        resultado[nome] = verificar(url)
 
-    for nome, url in PORTAIS.items():
+    return jsonify(resultado)
 
-        resultado = verificar_portal(nome, url)
-
-        resultados.append(resultado)
-
-        if resultado["status"] == "DISPONÍVEL":
-            disponiveis += 1
-
-    total = len(PORTAIS)
-
-    percentual = round((disponiveis / total) * 100)
-
-    return jsonify({
-        "portais": resultados,
-        "percentual": percentual,
-        "total": total,
-        "online": disponiveis,
-        "offline": total - disponiveis,
-        "atualizado": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    })
 
 if __name__ == "__main__":
-
-    port = int(os.environ.get("PORT", 10000))
-
-    app.run(host="0.0.0.0", port=port)
+    app.run()
